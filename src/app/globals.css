@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* ===== TEMA GRACIA IGLESIA CRISTIANA ===== */
+@theme {
+  /* Colores principales */
+  --color-gracia-50: #fef2f2;
+  --color-gracia-100: #fee2e2;
+  --color-gracia-200: #fecaca;
+  --color-gracia-300: #fca5a5;
+  --color-gracia-400: #f87171;
+  --color-gracia-500: #E31E24; /* Rojo principal del logo */
+  --color-gracia-600: #c41820;
+  --color-gracia-700: #a0141a;
+  --color-gracia-800: #7c1014;
+  --color-gracia-900: #5c0c0f;
+  --color-gracia-950: #330608;
+
+  /* Colores neutros */
+  --color-neutro-50: #f9fafb;
+  --color-neutro-100: #f3f4f6;
+  --color-neutro-200: #e5e7eb;
+  --color-neutro-300: #d1d5db;
+  --color-neutro-400: #9ca3af;
+  --color-neutro-500: #6b7280;
+  --color-neutro-600: #4b5563;
+  --color-neutro-700: #374151;
+  --color-neutro-800: #1f2937;
+  --color-neutro-900: #111827;
+
+  /* Fuente */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ===== ESTILOS BASE ===== */
+body {
+  font-family: var(--font-sans);
+  color: var(--color-neutro-800);
+  background-color: var(--color-neutro-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutro-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutro-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutro-400);
+}
+
+/* ===== INPUTS Y SELECTS ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+  font-family: var(--font-sans);
+}
+
+/* ===== FOCUS MEJORADO ===== */
+*:focus-visible {
+  outline: 2px solid var(--color-gracia-500);
+  outline-offset: 2px;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* ===== BOTONES CON TRANSICIÓN SUAVE ===== */
+button {
+  transition: all 0.15s ease-in-out;
+}
+
+/* ===== TARJETAS CON SOMBRA ELEGANTE ===== */
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.card-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ===== ESTILOS DE IMPRESIÓN (para PDF) ===== */
+@media print {
+  /* Ocultar elementos que no van en el PDF */
+  .no-print,
+  aside,
+  nav,
+  button {
+    display: none !important;
+  }
+
+  /* Ajustar márgenes */
+  body {
+    background: white !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Que se vea la tabla completa */
+  .print-content {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Evitar cortes en medio de filas */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Encabezados más visibles */
+  h1, h2, h3 {
+    color: #000 !important;
+  }
+}
