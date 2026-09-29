@@ -1,7 +1,0 @@
-[33mb96d947[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: eliminar API Key expuesta del archivo page.tsx
-[33m30925fe[m feat: asistente IA para versículos, reporte por meses, encabezado institucional, mejoras de UX
-[33m1ad40d0[m[33m ([m[1;31morigin/main[m[33m)[m docs: agregar README, CONTRIBUTING y LICENSE con documentación completa
-[33m24abc90[m docs: README profesional con arquitectura completa, badges, diagramas y roadmap
-[33m8fcc583[m Mejoras: rotación con fallback, reportes por rol, restricciones y ausencias, correos personalizados, botón anular
-[33mdfb2756[m Sistema EBD Gracia Iglesia Cristiana - versión inicial
-[33m24fa473[m Initial commit from Create Next App

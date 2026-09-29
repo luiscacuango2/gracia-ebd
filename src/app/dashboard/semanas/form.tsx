@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import BotonIAVersiculos from '@/components/BotonIAVersiculos'
 
 type Semana = {
   id?: string
@@ -126,6 +127,17 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           placeholder="Ej: Mateo 20:26-28, Juan 12:26, Mateo 23:11"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
         />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-2">
+          <BotonIAVersiculos
+            tema={form.tema}
+            onSugerencia={(versiculos) => {
+              setForm({ ...form, pasaje_biblico: versiculos })
+            }}
+          />
+          <p className="text-xs text-gray-500 italic">
+            💡 Los versículos son referenciales y puedes modificarlos cuando desees
+          </p>
+        </div>
       </div>
 
       <div>
