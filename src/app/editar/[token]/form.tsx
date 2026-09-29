@@ -103,6 +103,9 @@ export default function FormEdicionPublica({
           placeholder="Ej: Mateo 20:26-28, Juan 12:26, Mateo 23:11"
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
         />
+        <p className="text-xs text-gray-500 italic mt-2">
+          💡 Los versículos son referenciales y puedes modificarlos cuando desees
+        </p>
       </div>
 
       <div>
