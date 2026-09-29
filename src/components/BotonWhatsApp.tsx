@@ -90,7 +90,6 @@ return lineas.join('\n').trim()
     lineas.push('Esta semana nos ayudan los siguientes maestros:')
     lineas.push('')
     if (asignacion.principal && asignacion.ayudante) {
-      // 🆕 Solo el NOMBRE (sin apellido)
       lineas.push(
         `*Maestro principal:* ${asignacion.principal.nombres} y su ayudante: ${asignacion.ayudante.nombres}`
       )
@@ -103,20 +102,23 @@ return lineas.join('\n').trim()
     lineas.push('*Tema:*')
     lineas.push(semana.tema)
     lineas.push('')
+    if (semana.pasaje_biblico) {
+      lineas.push('*Versículos de estudio:*')
+      lineas.push(semana.pasaje_biblico)
+      lineas.push('')
+    }
     if (asignacion.ninos) {
       lineas.push('*Maestro de niños pequeños:*')
-      // 🆕 Solo el NOMBRE (sin apellido)
       lineas.push(asignacion.ninos.nombres)
     } else {
       lineas.push('*Maestro de niños pequeños:* Sin asignar')
     }
     lineas.push('')
-// 🆕 Actividad de niños
-  if (semana.actividad_ninos) {
-    lineas.push('*Actividad para niños pequeños:*')
-    lineas.push(semana.actividad_ninos)
-    lineas.push('')
-  }
+    if (semana.actividad_ninos) {
+      lineas.push('*Actividad para niños pequeños:*')
+      lineas.push(semana.actividad_ninos)
+      lineas.push('')
+    }
     lineas.push('Por favor confirmen su asistencia.')
     return lineas.join('\n').trim()
   }
@@ -144,14 +146,6 @@ return lineas.join('\n').trim()
     window.open(url, '_blank')
   }
 
-  const copiar = async (texto: string) => {
-    try {
-      await navigator.clipboard.writeText(texto)
-      alert('✅ Mensaje copiado al portapapeles')
-    } catch {
-      alert('❌ No se pudo copiar. Selecciona el texto manualmente.')
-    }
-  }
 
   const tiposDisponibles = esAdmin
     ? (['ninos', 'maestros', 'confirmacion'] as const)
@@ -165,7 +159,7 @@ return lineas.join('\n').trim()
           return (
             <div key={tipo} className="p-2 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-medium text-gray-600 flex-1 min-w-0 truncate">
+                <span className="text-xs font-medium text-gray-600 flex-1 min-w-0">
                   {m.titulo}
                 </span>
                 <div className="flex gap-1 flex-shrink-0">
@@ -183,12 +177,6 @@ return lineas.join('\n').trim()
                     className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-medium hover:bg-white bg-white"
                   >
                     {previewActivo === tipo ? '✕' : '👁'}
-                  </button>
-                  <button
-                    onClick={() => copiar(m.texto)}
-                    className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-medium hover:bg-white bg-white"
-                  >
-                    📋
                   </button>
                 </div>
               </div>
