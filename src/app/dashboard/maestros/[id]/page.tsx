@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import EditarMaestroForm from './form'
 
 export default async function EditarMaestroPage({
@@ -20,6 +21,16 @@ export default async function EditarMaestroPage({
 
   return (
     <div>
+      {/* Enlace para regresar */}
+      <div className="mb-6">
+        <Link
+          href="/dashboard/maestros"
+          className="text-red-600 hover:underline text-sm inline-flex items-center gap-1"
+        >
+          ← Volver al listado de maestros
+        </Link>
+      </div>
+
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
         Editar Maestro
       </h1>

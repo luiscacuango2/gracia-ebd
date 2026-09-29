@@ -4,8 +4,14 @@ import BotonWhatsApp from '@/components/BotonWhatsApp'
 import BotonAsignarMaestros from '@/components/BotonAsignarMaestros'
 import BotonEnviarMaestro from '@/components/BotonEnviarMaestro'
 import BotonEnviarRecordatorios from '@/components/BotonEnviarRecordatorios'
+import BotonAnularAsignaciones from '@/components/BotonAnularAsignaciones'
 
-export default async function SemanasPage() {
+export default async function SemanasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filtro?: string }>
+}) {
+  const { filtro = 'todas' } = await searchParams
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -71,6 +77,9 @@ export default async function SemanasPage() {
   const proximas = semanas?.filter((s) => s.fecha >= hoy) ?? []
   const pasadas = semanas?.filter((s) => s.fecha < hoy) ?? []
 
+  const mostrarFuturas = filtro === 'todas' || filtro === 'futuras'
+  const mostrarPasadas = filtro === 'todas' || filtro === 'pasadas'
+
   return (
     <div>
       {/* Header STICKY */}
@@ -106,22 +115,65 @@ export default async function SemanasPage() {
                 >
                   🎲 Rotación automática
                 </Link>
+                <BotonAnularAsignaciones />
+                <Link
+                  href="/dashboard/semanas/nueva"
+                  className="px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 text-sm"
+                  style={{ backgroundColor: '#E31E24' }}
+                >
+                  + Nueva semana
+                </Link>
               </>
             )}
-            <Link
-              href="/dashboard/semanas/nueva"
-              className="px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 text-sm"
-              style={{ backgroundColor: '#E31E24' }}
-            >
-              + Nueva semana
-            </Link>
+            {!esAdmin && (
+              <div className="text-xs text-gray-500 italic px-3 py-2 bg-white rounded-lg border border-gray-200">
+                👁 Vista de solo lectura
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Filtro */}
+        <div className="mt-4 flex gap-2 flex-wrap">
+          <Link
+            href="/dashboard/semanas?filtro=todas"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filtro === 'todas'
+                ? 'text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            style={filtro === 'todas' ? { backgroundColor: '#E31E24' } : {}}
+          >
+            📋 Todas ({semanas?.length ?? 0})
+          </Link>
+          <Link
+            href="/dashboard/semanas?filtro=futuras"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filtro === 'futuras'
+                ? 'text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            style={filtro === 'futuras' ? { backgroundColor: '#E31E24' } : {}}
+          >
+            📅 Futuras ({proximas.length})
+          </Link>
+          <Link
+            href="/dashboard/semanas?filtro=pasadas"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filtro === 'pasadas'
+                ? 'text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            style={filtro === 'pasadas' ? { backgroundColor: '#E31E24' } : {}}
+          >
+            📖 Pasadas ({pasadas.length})
+          </Link>
         </div>
       </div>
 
       {semanas && semanas.length > 0 ? (
         <div className="space-y-8">
-          {proximas.length > 0 && (
+          {mostrarFuturas && proximas.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold text-gray-700 mb-3">
                 📅 Próximas semanas
@@ -144,7 +196,7 @@ export default async function SemanasPage() {
             </div>
           )}
 
-          {pasadas.length > 0 && (
+          {mostrarPasadas && pasadas.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold text-gray-700 mb-3">
                 📖 Semanas pasadas
@@ -171,13 +223,20 @@ export default async function SemanasPage() {
       ) : (
         <div className="bg-white rounded-lg shadow p-12 text-center">
           <p className="text-gray-500 mb-4">No hay semanas registradas aún.</p>
-          <Link
-            href="/dashboard/semanas/nueva"
-            className="inline-block px-6 py-2 rounded-lg text-white font-medium"
-            style={{ backgroundColor: '#E31E24' }}
-          >
-            Crear primera semana
-          </Link>
+          {esAdmin && (
+            <Link
+              href="/dashboard/semanas/nueva"
+              className="inline-block px-6 py-2 rounded-lg text-white font-medium"
+              style={{ backgroundColor: '#E31E24' }}
+            >
+              Crear primera semana
+            </Link>
+          )}
+          {!esAdmin && (
+            <p className="text-xs text-gray-400">
+              Aún no hay clases programadas.
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -200,24 +259,9 @@ function SemanaCard({
   mapaMaestros: Map<string, { nombres: string; apellidos: string }>
   esAdmin: boolean
   miId: string | undefined
-  maestrosPrincipales: {
-    id: string
-    nombres: string
-    apellidos: string
-    activo: boolean
-  }[]
-  maestrosAyudantes: {
-    id: string
-    nombres: string
-    apellidos: string
-    activo: boolean
-  }[]
-  maestrosNinos: {
-    id: string
-    nombres: string
-    apellidos: string
-    activo: boolean
-  }[]
+  maestrosPrincipales: { id: string; nombres: string; apellidos: string; activo: boolean }[]
+  maestrosAyudantes: { id: string; nombres: string; apellidos: string; activo: boolean }[]
+  maestrosNinos: { id: string; nombres: string; apellidos: string; activo: boolean }[]
   pasada?: boolean
 }) {
   const fecha = new Date(semana.fecha + 'T12:00:00')
@@ -248,7 +292,7 @@ function SemanaCard({
   return (
     <div
       className={`bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 ${
-        pasada ? 'opacity-75' : ''
+        pasada ? 'opacity-90' : ''
       }`}
       style={{ borderColor: '#E31E24' }}
     >
@@ -310,7 +354,6 @@ function SemanaCard({
         </div>
       </div>
 
-      {/* Actividad de niños */}
       <div className="mt-4 pt-4 border-t border-gray-100">
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
           <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
@@ -330,50 +373,37 @@ function SemanaCard({
             <div className="flex items-start gap-2">
               <span className="text-base">🧑‍🏫</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">
-                  Principal
-                </p>
+                <p className="text-xs uppercase text-gray-400 font-medium">Principal</p>
                 <p className="text-gray-700 font-medium truncate">
-                  {principal
-                    ? `${principal.nombres} ${principal.apellidos}`
-                    : 'Sin asignar'}
+                  {principal ? `${principal.nombres} ${principal.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-base">🤝</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">
-                  Ayudante
-                </p>
+                <p className="text-xs uppercase text-gray-400 font-medium">Ayudante</p>
                 <p className="text-gray-700 font-medium truncate">
-                  {ayudante
-                    ? `${ayudante.nombres} ${ayudante.apellidos}`
-                    : 'Sin asignar'}
+                  {ayudante ? `${ayudante.nombres} ${ayudante.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-base">🧒</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">
-                  Niños
-                </p>
+                <p className="text-xs uppercase text-gray-400 font-medium">Niños</p>
                 <p className="text-gray-700 font-medium truncate">
-                  {ninos
-                    ? `${ninos.nombres} ${ninos.apellidos}`
-                    : 'Sin asignar'}
+                  {ninos ? `${ninos.nombres} ${ninos.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-gray-400 italic">
-            Sin maestros asignados aún
-          </p>
+          <p className="text-xs text-gray-400 italic">Sin maestros asignados aún</p>
         )}
       </div>
 
+      {/* Botón Modificar maestros: SOLO admin */}
       {esAdmin && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <BotonAsignarMaestros
@@ -392,30 +422,29 @@ function SemanaCard({
         </div>
       )}
 
-      {/* Botones: Enviar enlaces + Enviar recordatorios */}
-      {(esAdmin || esPrincipal) && (
+      {/* Botones Enviar enlaces / Enviar recordatorios: SOLO admin */}
+      {esAdmin && (
         <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
           <BotonEnviarMaestro
             semanaId={semana.id}
             semanaTema={semana.tema}
-	semanaFecha={semana.fecha}
+            semanaFecha={semana.fecha}
             tokenActual={semana.token_publico}
             esAdmin={esAdmin}
             tienePrincipal={!!asignacion?.maestro_principal_id}
             tieneNinos={!!asignacion?.maestro_ninos_id}
           />
-          {esAdmin && (
-            <BotonEnviarRecordatorios
-              semanaId={semana.id}
-              semanaTema={semana.tema}
-              semanaFecha={semana.fecha}
-              tienePrincipal={!!asignacion?.maestro_principal_id}
-              tieneNinos={!!asignacion?.maestro_ninos_id}
-            />
-          )}
+          <BotonEnviarRecordatorios
+            semanaId={semana.id}
+            semanaTema={semana.tema}
+            semanaFecha={semana.fecha}
+            tienePrincipal={!!asignacion?.maestro_principal_id}
+            tieneNinos={!!asignacion?.maestro_ninos_id}
+          />
         </div>
       )}
 
+      {/* Mensajes WhatsApp: para TODOS (admin ve 3, maestro ve 2) */}
       <div className="mt-4 pt-4 border-t border-gray-100">
         <p className="text-xs uppercase text-gray-400 font-medium mb-2">
           Mensajes para compartir
@@ -431,15 +460,9 @@ function SemanaCard({
           }}
           esAdmin={esAdmin}
           asignacion={{
-            principal: principal
-              ? { nombres: principal.nombres, apellidos: principal.apellidos }
-              : null,
-            ayudante: ayudante
-              ? { nombres: ayudante.nombres, apellidos: ayudante.apellidos }
-              : null,
-            ninos: ninos
-              ? { nombres: ninos.nombres, apellidos: ninos.apellidos }
-              : null,
+            principal: principal ? { nombres: principal.nombres, apellidos: principal.apellidos } : null,
+            ayudante: ayudante ? { nombres: ayudante.nombres, apellidos: ayudante.apellidos } : null,
+            ninos: ninos ? { nombres: ninos.nombres, apellidos: ninos.apellidos } : null,
           }}
         />
       </div>

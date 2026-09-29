@@ -8,16 +8,18 @@ export default async function ReportesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   const { data: yo } = await supabase
     .from('maestros')
-    .select('rol')
+    .select('id, rol, nombres, apellidos')
     .eq('correo', user?.email)
     .single()
 
-  if (yo?.rol !== 'admin') redirect('/dashboard')
+  if (!yo) redirect('/login')
+
+  const esAdmin = yo.rol === 'admin'
 
   const { data: semanas } = await supabase
     .from('semanas')
     .select('*')
-    .order('fecha', { ascending: false })
+    .order('fecha', { ascending: true })
 
   const { data: asignaciones } = await supabase
     .from('asignaciones')
@@ -70,9 +72,7 @@ export default async function ReportesPage() {
     return ids
       .map((id) => {
         const m = maestros?.find((x) => x.id === id)
-        return m
-          ? { id: m.id, nombres: m.nombres, apellidos: m.apellidos }
-          : null
+        return m ? { id: m.id, nombres: m.nombres, apellidos: m.apellidos } : null
       })
       .filter(Boolean)
   }
@@ -81,8 +81,20 @@ export default async function ReportesPage() {
   const maestrosAyudantes = filtroGrupo('ayudantes') as { id: string; nombres: string; apellidos: string }[]
   const maestrosNinos = filtroGrupo('ninos') as { id: string; nombres: string; apellidos: string }[]
 
-  // Preparar datos para el reporte
-  const semanasConDatos = (semanas ?? []).map((s) => {
+  // Filtrar semanas según rol
+  const semanasParaMostrar = esAdmin
+    ? (semanas ?? [])
+    : (semanas ?? []).filter((s) => {
+        const a = mapaAsignaciones.get(s.id)
+        if (!a) return false
+        return (
+          a.maestro_principal_id === yo.id ||
+          a.maestro_ayudante_id === yo.id ||
+          a.maestro_ninos_id === yo.id
+        )
+      })
+
+  const semanasConDatos = semanasParaMostrar.map((s) => {
     const a = mapaAsignaciones.get(s.id)
     return {
       id: s.id,
@@ -104,7 +116,7 @@ export default async function ReportesPage() {
     }
   })
 
-  const maestrosConConteos = [
+  let maestrosConConteos = [
     ...maestrosPrincipales.map((m) => ({
       ...m,
       grupo: 'Principal',
@@ -122,10 +134,16 @@ export default async function ReportesPage() {
     })),
   ]
 
+  if (!esAdmin) {
+    maestrosConConteos = maestrosConConteos.filter((m) => m.id === yo.id)
+  }
+
   return (
     <ReportesCliente
       semanas={semanasConDatos}
       maestros={maestrosConConteos}
+      esAdmin={esAdmin}
+      nombreUsuario={`${yo.nombres} ${yo.apellidos}`}
     />
   )
 }

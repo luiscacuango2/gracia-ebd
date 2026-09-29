@@ -44,23 +44,27 @@ export default async function EditarSemanaPage({
 
   const esAdmin = yo.rol === 'admin'
   const esPrincipal = asignacion?.maestro_principal_id === yo.id
+  const esNinos = asignacion?.maestro_ninos_id === yo.id
+  const esAyudante = asignacion?.maestro_ayudante_id === yo.id
 
-  // 🆕 Verificar si la semana es futura (no dictada aún)
   const hoy = new Date().toISOString().split('T')[0]
   const esFutura = semana.fecha >= hoy
 
-  // 🆕 Regla de permisos:
+  // Reglas de edición:
   // - Admin: puede editar siempre
   // - Maestro principal: solo puede editar si la clase es FUTURA
+  // - Maestro de niños: solo puede editar la ACTIVIDAD (lo maneja el form)
+  // - Otros: solo lectura
   const puedeEditar = esAdmin || (esPrincipal && esFutura)
 
-  // Determinar por qué no puede editar (para mensaje)
   const razonNoEditar = !puedeEditar
     ? esPrincipal && !esFutura
       ? 'Esta clase ya fue dictada. Solo el administrador puede modificar clases pasadas.'
-      : !esPrincipal
-        ? 'Solo el maestro principal de esta semana puede editar los datos.'
-        : ''
+      : esNinos
+        ? 'Como maestro de niños puedes registrar la actividad desde tu enlace.'
+        : esAyudante
+          ? 'Como ayudante puedes ver la información de la clase.'
+          : 'Solo el maestro principal de esta semana puede editar los datos.'
     : ''
 
   // ===== VISTA DE SOLO LECTURA =====
@@ -76,7 +80,6 @@ export default async function EditarSemanaPage({
           </Link>
         </div>
 
-        {/* Banner informativo */}
         <div
           className={`rounded-lg p-4 mb-6 border ${
             esPrincipal && !esFutura
@@ -91,16 +94,14 @@ export default async function EditarSemanaPage({
                 : 'text-blue-800'
             }`}
           >
-            {esPrincipal && !esFutura
-              ? '📜 '
-              : 'ℹ️ '}
+            {esPrincipal && !esFutura ? '📜 ' : 'ℹ️ '}
             {razonNoEditar}
           </p>
         </div>
 
         {/* Encabezado */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-6">
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 break-words">
               {semana.tema}
             </h1>
@@ -125,7 +126,17 @@ export default async function EditarSemanaPage({
             </span>
             {esPrincipal && (
               <span className="text-xs px-3 py-1 rounded-full font-medium bg-red-100 text-red-800">
-                🧑‍🏫 Eres el principal
+                🧑‍🏫 Eres principal
+              </span>
+            )}
+            {esAyudante && (
+              <span className="text-xs px-3 py-1 rounded-full font-medium bg-blue-100 text-blue-800">
+                🤝 Eres ayudante
+              </span>
+            )}
+            {esNinos && (
+              <span className="text-xs px-3 py-1 rounded-full font-medium bg-yellow-100 text-yellow-800">
+                🧒 Maestro de niños
               </span>
             )}
           </div>
@@ -155,6 +166,18 @@ export default async function EditarSemanaPage({
             </p>
             <p className="text-gray-700 text-sm whitespace-pre-wrap">
               {semana.manualidad || '—'}
+            </p>
+          </div>
+
+          {/* 🆕 Actividad para niños pequeños (SOLO LECTURA) */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
+              🧒 Actividad para niños pequeños
+            </p>
+            <p className="text-gray-700 text-sm whitespace-pre-wrap">
+              {semana.actividad_ninos || (
+                <span className="text-gray-400 italic">Sin registrar</span>
+              )}
             </p>
           </div>
 
@@ -224,19 +247,21 @@ export default async function EditarSemanaPage({
           : 'Como maestro principal de esta semana, puedes editar los datos de la clase.'}
       </p>
 
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-3xl">
-        <SemanaForm semana={semana} />
-      </div>
-
-      {esAdmin && (
-        <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4 max-w-3xl">
-          <p className="text-sm text-gray-600">
-            💡 Para asignar maestros a esta semana, ve al listado y usa el botón{' '}
-            <strong>"👥 Asignar maestros"</strong> o{' '}
-            <strong>"✏️ Modificar maestros"</strong>.
+      {/* Info de la actividad de niños */}
+      {semana.actividad_ninos && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 max-w-3xl">
+          <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
+            🧒 Actividad para niños pequeños (registrada por el maestro de niños)
+          </p>
+          <p className="text-gray-700 text-sm whitespace-pre-wrap">
+            {semana.actividad_ninos}
           </p>
         </div>
       )}
+
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-3xl">
+        <SemanaForm semana={semana} />
+      </div>
     </div>
   )
 }

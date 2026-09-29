@@ -59,8 +59,8 @@ export default function BotonEnviarMaestro({
   const handleCompartirWhatsApp = (enlace: string, tipo: 'principal' | 'ninos') => {
     const texto =
       tipo === 'principal'
-        ? `Hola, te comparto el enlace para editar tu clase como maestro principal:\n\n*Tema:* ${semanaTema}\n\n${enlace}\n\nPuedes modificar el tema, versículos, manualidad y la actividad de niños. La fecha queda bloqueada.\n\nDios te bendiga.`
-        : `Hola, te comparto el enlace para registrar la actividad de niños pequeños:\n\n*Tema:* ${semanaTema}\n\n${enlace}\n\nAquí puedes escribir la actividad que realizarás con los niños.\n\nDios te bendiga.`
+        ? `Hola, te comparto el enlace para editar tu clase como maestro principal:\n\n*Tema:* ${semanaTema}\n\n${enlace}\n\nPuedes modificar el tema, versículos, manualidad y la actividad de niños. La fecha queda bloqueada.\n\nDios te bendice.`
+        : `Hola, te comparto el enlace para registrar la actividad de niños pequeños:\n\n*Tema:* ${semanaTema}\n\n${enlace}\n\nAquí puedes escribir la actividad que realizarás con los niños.\n\nDios te bendice.`
     const url = `https://wa.me/?text=${encodeURIComponent(texto)}`
     window.open(url, '_blank')
   }

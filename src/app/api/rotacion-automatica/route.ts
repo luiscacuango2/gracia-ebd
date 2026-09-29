@@ -71,6 +71,34 @@ export async function POST() {
     ninos: filtroGrupo('ninos'),
   }
 
+  const { data: restricciones } = await supabase
+    .from('restricciones_maestros')
+    .select('maestro_1_id, maestro_2_id')
+
+  const { data: ausencias } = await supabase
+    .from('ausencias_maestros')
+    .select('maestro_id, fecha_desde, fecha_hasta')
+
+  const mapaRestricciones = new Map<string, string[]>()
+  ;(restricciones ?? []).forEach((r) => {
+    if (!r.maestro_1_id || !r.maestro_2_id) return
+    if (!mapaRestricciones.has(r.maestro_1_id))
+      mapaRestricciones.set(r.maestro_1_id, [])
+    if (!mapaRestricciones.has(r.maestro_2_id))
+      mapaRestricciones.set(r.maestro_2_id, [])
+    mapaRestricciones.get(r.maestro_1_id)!.push(r.maestro_2_id)
+    mapaRestricciones.get(r.maestro_2_id)!.push(r.maestro_1_id)
+  })
+
+  const estaAusente = (maestroId: string, fecha: string): boolean => {
+    return (ausencias ?? []).some(
+      (a) =>
+        a.maestro_id === maestroId &&
+        a.fecha_desde <= fecha &&
+        a.fecha_hasta >= fecha
+    )
+  }
+
   const { data: asignacionesExistentes } = await supabase
     .from('asignaciones')
     .select('*')
@@ -86,56 +114,67 @@ export async function POST() {
     (todosMaestros ?? []).map((m) => [m.id, `${m.nombres} ${m.apellidos}`])
   )
 
-  // 🆕 Historial por rol: última fecha en que sirvió cada maestro EN CADA ROL
-  const ultimaFechaPorRol: {
-    principales: Map<string, string>
-    ayudantes: Map<string, string>
-    ninos: Map<string, string>
-  } = {
-    principales: new Map(),
-    ayudantes: new Map(),
-    ninos: new Map(),
+  const conteoPorRol = {
+    principales: new Map<string, number>(),
+    ayudantes: new Map<string, number>(),
+    ninos: new Map<string, number>(),
   }
 
-  // Mapa: semana_id -> [todos los ids que sirvieron]
-  const idsPorSemana = new Map<string, string[]>()
-
-  // También contamos cuántas veces cada maestro ha servido en cada rol
-  // (esto reemplaza el conteo global anterior)
   ;(asignacionesExistentes ?? []).forEach((a) => {
-    const semana = todasSemanas.find((s) => s.id === a.semana_id)
-    if (!semana) return
-
-    // Actualizar última fecha por rol
-    if (a.maestro_principal_id) {
-      const prev = ultimaFechaPorRol.principales.get(a.maestro_principal_id)
-      if (!prev || semana.fecha > prev) {
-        ultimaFechaPorRol.principales.set(a.maestro_principal_id, semana.fecha)
-      }
-    }
-    if (a.maestro_ayudante_id) {
-      const prev = ultimaFechaPorRol.ayudantes.get(a.maestro_ayudante_id)
-      if (!prev || semana.fecha > prev) {
-        ultimaFechaPorRol.ayudantes.set(a.maestro_ayudante_id, semana.fecha)
-      }
-    }
-    if (a.maestro_ninos_id) {
-      const prev = ultimaFechaPorRol.ninos.get(a.maestro_ninos_id)
-      if (!prev || semana.fecha > prev) {
-        ultimaFechaPorRol.ninos.set(a.maestro_ninos_id, semana.fecha)
-      }
-    }
-
-    // Actualizar ids por semana
-    const ids = [
-      a.maestro_principal_id,
-      a.maestro_ayudante_id,
-      a.maestro_ninos_id,
-    ].filter(Boolean) as string[]
-    idsPorSemana.set(a.semana_id, ids)
+    if (a.maestro_principal_id)
+      conteoPorRol.principales.set(
+        a.maestro_principal_id,
+        (conteoPorRol.principales.get(a.maestro_principal_id) || 0) + 1
+      )
+    if (a.maestro_ayudante_id)
+      conteoPorRol.ayudantes.set(
+        a.maestro_ayudante_id,
+        (conteoPorRol.ayudantes.get(a.maestro_ayudante_id) || 0) + 1
+      )
+    if (a.maestro_ninos_id)
+      conteoPorRol.ninos.set(
+        a.maestro_ninos_id,
+        (conteoPorRol.ninos.get(a.maestro_ninos_id) || 0) + 1
+      )
   })
 
+  // Mapa global de servicio por maestro
+  const semanasQueSirvioPorMaestro = new Map<string, Set<number>>()
+
+  const registrarServicio = (maestroId: string, indexSemana: number) => {
+    if (!semanasQueSirvioPorMaestro.has(maestroId)) {
+      semanasQueSirvioPorMaestro.set(maestroId, new Set())
+    }
+    semanasQueSirvioPorMaestro.get(maestroId)!.add(indexSemana)
+  }
+
+  // Cargar historial existente
+  ;(asignacionesExistentes ?? []).forEach((a) => {
+    const idx = todasSemanas.findIndex((s) => s.id === a.semana_id)
+    if (idx === -1) return
+    if (a.maestro_principal_id) registrarServicio(a.maestro_principal_id, idx)
+    if (a.maestro_ayudante_id) registrarServicio(a.maestro_ayudante_id, idx)
+    if (a.maestro_ninos_id) registrarServicio(a.maestro_ninos_id, idx)
+  })
+
+  const puedeServirEnSemana = (
+    maestroId: string,
+    indexSemana: number
+  ): boolean => {
+    const semanas = semanasQueSirvioPorMaestro.get(maestroId)
+    if (!semanas) return true
+
+    for (let offset = 1; offset <= 4; offset++) {
+      if (semanas.has(indexSemana - offset)) return false
+    }
+    for (let offset = 1; offset <= 4; offset++) {
+      if (semanas.has(indexSemana + offset)) return false
+    }
+    return true
+  }
+
   let asignadas = 0
+  let semanasConFallback = 0
   const detalle: Array<{
     fecha: string
     tema: string
@@ -143,200 +182,205 @@ export async function POST() {
     ayudante: string
     ninos: string
     cambio: boolean
+    nota?: string
   }> = []
 
-  for (let i = 0; i < semanasFuturas.length; i++) {
-    const semana = semanasFuturas[i]
+  // 🆕 Función de elección con 3 NIVELES de fallback
+  const elegir = (
+    grupo: 'principales' | 'ayudantes' | 'ninos',
+    indexSemana: number,
+    fechaSemana: string,
+    yaAsignadosEstaSemana: string[]
+  ): { maestro: any; fallback: 'ninguno' | 'descanso' | 'restriccion' } | null => {
+    const todosCandidatos = gruposMaestros[grupo]
 
-    // 🆕 Calcular IDs que sirvieron en las últimas 3 semanas (regla de descanso)
-    const idsEnDescanso: string[] = []
+    // NIVEL 1: Estricto (respeta todo)
+    const nivel1 = todosCandidatos.filter((m) => {
+      if (yaAsignadosEstaSemana.includes(m.id)) return false
+      if (estaAusente(m.id, fechaSemana)) return false
+      if (!puedeServirEnSemana(m.id, indexSemana)) return false
+      const restriccionesDeEste = mapaRestricciones.get(m.id) || []
+      if (yaAsignadosEstaSemana.some((id) => restriccionesDeEste.includes(id)))
+        return false
+      return true
+    })
 
-    for (let offset = 1; offset <= 3; offset++) {
-      const idxAnterior = i - offset
-      let semanaAnteriorId: string | null = null
-
-      if (idxAnterior >= 0) {
-        semanaAnteriorId = semanasFuturas[idxAnterior].id
-      } else {
-        const semanasPasadas = todasSemanas.filter((s) => s.fecha < hoy)
-        const idxPasada = semanasPasadas.length + idxAnterior
-        if (idxPasada >= 0 && idxPasada < semanasPasadas.length) {
-          semanaAnteriorId = semanasPasadas[idxPasada].id
-        }
-      }
-
-      if (semanaAnteriorId) {
-        const ids = idsPorSemana.get(semanaAnteriorId) || []
-        idsEnDescanso.push(...ids)
-      }
-    }
-
-    const asignacionActual = mapaAsignaciones.get(semana.id)
-
-    const yaAsignado = {
-      principal: asignacionActual?.maestro_principal_id || null,
-      ayudante: asignacionActual?.maestro_ayudante_id || null,
-      ninos: asignacionActual?.maestro_ninos_id || null,
-    }
-
-    // 🆕 Función de elección: prioriza al que hace MÁS TIEMPO no sirve en ese ROL
-    const elegir = (
-      grupo: 'principales' | 'ayudantes' | 'ninos',
-      yaAsignadosEnSemana: (string | null)[]
-    ) => {
-      // Candidatos base: del grupo, sin los ya asignados esta semana
-      const candidatosBase = gruposMaestros[grupo].filter(
-        (m) => !yaAsignadosEnSemana.includes(m.id)
-      )
-
-      // Filtrar a los que NO están en descanso obligatorio
-      const candidatosDescansados = candidatosBase.filter(
-        (m) => !idsEnDescanso.includes(m.id)
-      )
-
-      // Preferir descansados; si no hay, usar todos (fallback)
-      const candidatos =
-        candidatosDescansados.length > 0 ? candidatosDescansados : candidatosBase
-
-      if (candidatos.length === 0) return { maestro: null, usoFallback: false }
-
-      // Ordenar: 
-      //  1. Menor uso total en ese ROL (para balancear)
-      //  2. Última fecha más antigua (el que hace más tiempo no sirve EN ESE ROL)
-      //  3. Alfabético como desempate
-      candidatos.sort((a, b) => {
-        // Contar cuántas veces ha servido en este rol
-        const conteoA = contarRol(a.id, grupo)
-        const conteoB = contarRol(b.id, grupo)
-
-        if (conteoA !== conteoB) return conteoA - conteoB
-
-        // Si empatan en conteo, priorizar al que hace más tiempo no sirve
-        const fechaA = ultimaFechaPorRol[grupo].get(a.id) || '1900-01-01'
-        const fechaB = ultimaFechaPorRol[grupo].get(b.id) || '1900-01-01'
-
-        if (fechaA !== fechaB) return fechaA.localeCompare(fechaB)
-
-        // Desempate alfabético
+    if (nivel1.length > 0) {
+      nivel1.sort((a, b) => {
+        const usoA = conteoPorRol[grupo].get(a.id) || 0
+        const usoB = conteoPorRol[grupo].get(b.id) || 0
+        if (usoA !== usoB) return usoA - usoB
         return `${a.nombres} ${a.apellidos}`.localeCompare(
           `${b.nombres} ${b.apellidos}`,
           'es'
         )
       })
-
-      return {
-        maestro: candidatos[0],
-        usoFallback: candidatosDescansados.length === 0,
-      }
+      return { maestro: nivel1[0], fallback: 'ninguno' }
     }
 
-    // Función auxiliar: contar cuántas veces ha servido un maestro en un rol
-    const contarRol = (maestroId: string, grupo: string): number => {
-      let count = 0
-      ;(asignacionesExistentes ?? []).forEach((a) => {
-        if (grupo === 'principales' && a.maestro_principal_id === maestroId)
-          count++
-        if (grupo === 'ayudantes' && a.maestro_ayudante_id === maestroId)
-          count++
-        if (grupo === 'ninos' && a.maestro_ninos_id === maestroId) count++
+    // NIVEL 2: Relajar descanso (mantener ausencias y restricciones)
+    const nivel2 = todosCandidatos.filter((m) => {
+      if (yaAsignadosEstaSemana.includes(m.id)) return false
+      if (estaAusente(m.id, fechaSemana)) return false
+      const restriccionesDeEste = mapaRestricciones.get(m.id) || []
+      if (yaAsignadosEstaSemana.some((id) => restriccionesDeEste.includes(id)))
+        return false
+      return true
+    })
+
+    if (nivel2.length > 0) {
+      // Priorizar al que hace MÁS tiempo no sirvió (menos reciente)
+      nivel2.sort((a, b) => {
+        const semanasA = semanasQueSirvioPorMaestro.get(a.id) || new Set()
+        const semanasB = semanasQueSirvioPorMaestro.get(b.id) || new Set()
+        const ultA = semanasA.size > 0 ? Math.max(...Array.from(semanasA)) : -9999
+        const ultB = semanasB.size > 0 ? Math.max(...Array.from(semanasB)) : -9999
+        if (ultA !== ultB) return ultA - ultB
+
+        const usoA = conteoPorRol[grupo].get(a.id) || 0
+        const usoB = conteoPorRol[grupo].get(b.id) || 0
+        if (usoA !== usoB) return usoA - usoB
+        return `${a.nombres} ${a.apellidos}`.localeCompare(
+          `${b.nombres} ${b.apellidos}`,
+          'es'
+        )
       })
-      return count
+      return { maestro: nivel2[0], fallback: 'descanso' }
     }
+
+    // NIVEL 3: Relajar también restricciones (último recurso)
+    const nivel3 = todosCandidatos.filter((m) => {
+      if (yaAsignadosEstaSemana.includes(m.id)) return false
+      if (estaAusente(m.id, fechaSemana)) return false
+      return true
+    })
+
+    if (nivel3.length > 0) {
+      nivel3.sort((a, b) => {
+        const semanasA = semanasQueSirvioPorMaestro.get(a.id) || new Set()
+        const semanasB = semanasQueSirvioPorMaestro.get(b.id) || new Set()
+        const ultA = semanasA.size > 0 ? Math.max(...Array.from(semanasA)) : -9999
+        const ultB = semanasB.size > 0 ? Math.max(...Array.from(semanasB)) : -9999
+        if (ultA !== ultB) return ultA - ultB
+
+        const usoA = conteoPorRol[grupo].get(a.id) || 0
+        const usoB = conteoPorRol[grupo].get(b.id) || 0
+        return usoA - usoB
+      })
+      return { maestro: nivel3[0], fallback: 'restriccion' }
+    }
+
+    return null
+  }
+
+  for (let i = 0; i < semanasFuturas.length; i++) {
+    const semana = semanasFuturas[i]
+    const indexGlobal = todasSemanas.findIndex((s) => s.id === semana.id)
+
+    const asignacionActual = mapaAsignaciones.get(semana.id)
 
     const datosAsignacion: any = {
       semana_id: semana.id,
-      maestro_principal_id: yaAsignado.principal,
-      maestro_ayudante_id: yaAsignado.ayudante,
-      maestro_ninos_id: yaAsignado.ninos,
+      maestro_principal_id: asignacionActual?.maestro_principal_id || null,
+      maestro_ayudante_id: asignacionActual?.maestro_ayudante_id || null,
+      maestro_ninos_id: asignacionActual?.maestro_ninos_id || null,
+    }
+
+    if (
+      datosAsignacion.maestro_principal_id &&
+      datosAsignacion.maestro_ayudante_id &&
+      datosAsignacion.maestro_ninos_id
+    ) {
+      detalle.push({
+        fecha: semana.fecha,
+        tema: semana.tema || '(Sin tema registrado)',
+        principal: mapaTodos.get(datosAsignacion.maestro_principal_id) || '—',
+        ayudante: mapaTodos.get(datosAsignacion.maestro_ayudante_id) || '—',
+        ninos: mapaTodos.get(datosAsignacion.maestro_ninos_id) || '—',
+        cambio: false,
+      })
+      continue
     }
 
     let cambio = false
+    let usoFallbackEstaSemana = false
 
+    // Principal
     if (!datosAsignacion.maestro_principal_id) {
-      const { maestro: m } = elegir('principales', [
-        datosAsignacion.maestro_ayudante_id,
-        datosAsignacion.maestro_ninos_id,
-      ].filter(Boolean))
-      if (m) {
-        datosAsignacion.maestro_principal_id = m.id
+      const res = elegir(
+        'principales',
+        indexGlobal,
+        semana.fecha,
+        [
+          datosAsignacion.maestro_ayudante_id,
+          datosAsignacion.maestro_ninos_id,
+        ].filter(Boolean)
+      )
+      if (res) {
+        datosAsignacion.maestro_principal_id = res.maestro.id
+        registrarServicio(res.maestro.id, indexGlobal)
+        conteoPorRol.principales.set(
+          res.maestro.id,
+          (conteoPorRol.principales.get(res.maestro.id) || 0) + 1
+        )
         cambio = true
+        if (res.fallback !== 'ninguno') usoFallbackEstaSemana = true
       }
     }
 
+    // Ayudante
     if (!datosAsignacion.maestro_ayudante_id) {
-      const { maestro: m } = elegir('ayudantes', [
-        datosAsignacion.maestro_principal_id,
-        datosAsignacion.maestro_ninos_id,
-      ].filter(Boolean))
-      if (m) {
-        datosAsignacion.maestro_ayudante_id = m.id
+      const res = elegir(
+        'ayudantes',
+        indexGlobal,
+        semana.fecha,
+        [
+          datosAsignacion.maestro_principal_id,
+          datosAsignacion.maestro_ninos_id,
+        ].filter(Boolean)
+      )
+      if (res) {
+        datosAsignacion.maestro_ayudante_id = res.maestro.id
+        registrarServicio(res.maestro.id, indexGlobal)
+        conteoPorRol.ayudantes.set(
+          res.maestro.id,
+          (conteoPorRol.ayudantes.get(res.maestro.id) || 0) + 1
+        )
         cambio = true
+        if (res.fallback !== 'ninguno') usoFallbackEstaSemana = true
       }
     }
 
+    // Niños
     if (!datosAsignacion.maestro_ninos_id) {
-      const { maestro: m } = elegir('ninos', [
-        datosAsignacion.maestro_principal_id,
-        datosAsignacion.maestro_ayudante_id,
-      ].filter(Boolean))
-      if (m) {
-        datosAsignacion.maestro_ninos_id = m.id
+      const res = elegir(
+        'ninos',
+        indexGlobal,
+        semana.fecha,
+        [
+          datosAsignacion.maestro_principal_id,
+          datosAsignacion.maestro_ayudante_id,
+        ].filter(Boolean)
+      )
+      if (res) {
+        datosAsignacion.maestro_ninos_id = res.maestro.id
+        registrarServicio(res.maestro.id, indexGlobal)
+        conteoPorRol.ninos.set(
+          res.maestro.id,
+          (conteoPorRol.ninos.get(res.maestro.id) || 0) + 1
+        )
         cambio = true
+        if (res.fallback !== 'ninguno') usoFallbackEstaSemana = true
       }
     }
+
+    if (usoFallbackEstaSemana) semanasConFallback++
 
     if (cambio) {
       await supabase
         .from('asignaciones')
         .upsert(datosAsignacion, { onConflict: 'semana_id' })
       asignadas++
-
-      // 🆕 Actualizar el historial interno para esta semana
-      const idsEstaSemana = [
-        datosAsignacion.maestro_principal_id,
-        datosAsignacion.maestro_ayudante_id,
-        datosAsignacion.maestro_ninos_id,
-      ].filter(Boolean) as string[]
-
-      idsPorSemana.set(semana.id, idsEstaSemana)
-
-      // Actualizar última fecha por rol para los nuevos asignados
-      if (datosAsignacion.maestro_principal_id) {
-        const prev = ultimaFechaPorRol.principales.get(
-          datosAsignacion.maestro_principal_id
-        )
-        if (!prev || semana.fecha > prev) {
-          ultimaFechaPorRol.principales.set(
-            datosAsignacion.maestro_principal_id,
-            semana.fecha
-          )
-        }
-      }
-      if (datosAsignacion.maestro_ayudante_id) {
-        const prev = ultimaFechaPorRol.ayudantes.get(
-          datosAsignacion.maestro_ayudante_id
-        )
-        if (!prev || semana.fecha > prev) {
-          ultimaFechaPorRol.ayudantes.set(
-            datosAsignacion.maestro_ayudante_id,
-            semana.fecha
-          )
-        }
-      }
-      if (datosAsignacion.maestro_ninos_id) {
-        const prev = ultimaFechaPorRol.ninos.get(
-          datosAsignacion.maestro_ninos_id
-        )
-        if (!prev || semana.fecha > prev) {
-          ultimaFechaPorRol.ninos.set(
-            datosAsignacion.maestro_ninos_id,
-            semana.fecha
-          )
-        }
-      }
-
-      // Añadir al listado global para futuras iteraciones
-      asignacionesExistentes?.push(datosAsignacion)
     }
 
     mapaAsignaciones.set(semana.id, datosAsignacion)
@@ -353,15 +397,24 @@ export async function POST() {
       ayudante: nombre(datosAsignacion.maestro_ayudante_id),
       ninos: nombre(datosAsignacion.maestro_ninos_id),
       cambio,
+      nota: usoFallbackEstaSemana
+        ? '⚠️ Se relajó alguna regla por falta de maestros disponibles'
+        : undefined,
     })
   }
+
+  const mensajeExtra =
+    semanasConFallback > 0
+      ? ` ⚠️ ${semanasConFallback} semana${semanasConFallback === 1 ? '' : 's'} usaron fallback (no había suficientes maestros disponibles para respetar todas las reglas).`
+      : ''
 
   return NextResponse.json({
     exito: true,
     mensaje: `Se generaron ${asignadas} asignación${
       asignadas === 1 ? '' : 'es'
-    } automáticamente en ${semanasFuturas.length} semanas.`,
+    } automáticamente en ${semanasFuturas.length} semanas.${mensajeExtra}`,
     asignadas,
+    semanasConFallback,
     detalle,
   })
 }

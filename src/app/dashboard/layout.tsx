@@ -60,17 +60,16 @@ export default function DashboardLayout({
   const links = [
     { href: '/dashboard', label: 'Inicio', icon: '📊', exact: true },
     { href: '/dashboard/semanas', label: 'Semanas', icon: '📅' },
-    { href: '/dashboard/maestros', label: 'Maestros', icon: '🧑‍🏫' },
-    { href: '/dashboard/perfil', label: 'Mi perfil', icon: '👤' }, // 🆕
+    { href: '/dashboard/reportes', label: 'Reportes', icon: '📊' },
   ]
 
-  const adminLinks = [
-    { href: '/dashboard/grupos', label: 'Grupos de maestros', icon: '👥' },
-    { href: '/dashboard/rotacion-automatica', label: 'Rotación automática', icon: '🎲' },
-    { href: '/dashboard/reportes', label: 'Reportes', icon: '📊' }, // 🆕
-    { href: '/dashboard/rotaciones', label: 'Historial de cambios', icon: '🔄' },
-  ]
-
+const adminLinks = [
+  { href: '/dashboard/maestros', label: 'Maestros', icon: '🧑‍' },
+  { href: '/dashboard/grupos', label: 'Grupos de maestros', icon: '👥' },
+  { href: '/dashboard/restricciones', label: 'Restricciones y ausencias', icon: '🚫' },
+  { href: '/dashboard/rotacion-automatica', label: 'Rotación automática', icon: '🎲' },
+  { href: '/dashboard/rotaciones', label: 'Historial de cambios', icon: '🔄' },
+]
   const esActivo = (href: string, exact = false) => {
     if (exact) return pathname === href
     return pathname.startsWith(href)

@@ -29,15 +29,18 @@ type TipoReporte = 'semanas' | 'maestros' | 'ninos'
 export default function ReportesCliente({
   semanas,
   maestros,
+  esAdmin = true,
+  nombreUsuario = '',
 }: {
   semanas: Semana[]
   maestros: MaestroConteo[]
+  esAdmin?: boolean
+  nombreUsuario?: string
 }) {
   const [tipoReporte, setTipoReporte] = useState<TipoReporte>('semanas')
   const [fechaDesde, setFechaDesde] = useState('')
   const [fechaHasta, setFechaHasta] = useState('')
 
-  // Filtrar datos según fechas
   const semanasFiltradas = useMemo(() => {
     return semanas.filter((s) => {
       if (fechaDesde && s.fecha < fechaDesde) return false
@@ -55,7 +58,7 @@ export default function ReportesCliente({
         'Versículos de estudio',
         'Versículo para memorizar',
         'Manualidad',
-	'Actividad niños', //ninos actividad
+        'Actividad de niños pequeños',
         'Maestro principal',
         'Maestro ayudante',
         'Maestro de niños',
@@ -66,7 +69,7 @@ export default function ReportesCliente({
         s.pasaje_biblico || '',
         s.versiculo_memorizar || '',
         s.manualidad || '',
-	s.actividad_ninos || '', // actividad ninos
+        s.actividad_ninos || '',
         s.principal,
         s.ayudante,
         s.ninos,
@@ -75,11 +78,10 @@ export default function ReportesCliente({
     } else if (tipoReporte === 'maestros') {
       const headers = ['Maestro', 'Grupo', 'Total de clases']
       const filas = [...maestros]
-        .sort((a, b) => b.total - a.total)
+        .sort((a, b) => a.total - b.total)
         .map((m) => [`${m.nombres} ${m.apellidos}`, m.grupo, m.total])
       descargarCSV(headers, filas, 'reporte_maestros')
     } else {
-      // 🆕 Reporte de niños
       const headers = [
         'Fecha',
         'Tema',
@@ -88,12 +90,7 @@ export default function ReportesCliente({
       ]
       const filas = semanasFiltradas
         .filter((s) => s.actividad_ninos)
-        .map((s) => [
-          s.fecha,
-          s.tema,
-          s.actividad_ninos || '',
-          s.ninos,
-        ])
+        .map((s) => [s.fecha, s.tema, s.actividad_ninos || '', s.ninos])
       descargarCSV(headers, filas, 'reporte_actividades_ninos')
     }
   }
@@ -163,7 +160,7 @@ export default function ReportesCliente({
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
             >
               <option value="semanas">📅 Semanas (clases)</option>
-              <option value="maestros">🧑‍🏫 Maestros (conteo)</option>
+              <option value="maestros">🧑‍ Maestros (conteo)</option>
               <option value="ninos">🧒 Actividades de niños</option>
             </select>
           </div>
@@ -246,18 +243,20 @@ export default function ReportesCliente({
               </p>
             </div>
 
+            {/* Vista desktop: tabla compacta */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Tema</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Versículos</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Versículo memo.</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Manualidad</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Principal</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Ayudante</th>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase">Niños</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Fecha</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Tema</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Versículos de estudio</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Versículo para memorizar</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Manualidad</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Actividad de niños pequeños</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🧑‍ Maestro principal</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🤝 Maestro ayudante</th>
+                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🧒 Maestro de niños</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -274,15 +273,25 @@ export default function ReportesCliente({
                       <td className="px-3 py-2 text-xs text-gray-600">{s.pasaje_biblico || '—'}</td>
                       <td className="px-3 py-2 text-xs text-gray-600">{s.versiculo_memorizar || '—'}</td>
                       <td className="px-3 py-2 text-xs text-gray-600">{s.manualidad || '—'}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700">{s.principal}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700">{s.ayudante}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700">{s.ninos}</td>
+                      <td className="px-3 py-2 text-xs text-gray-600">
+                        {s.actividad_ninos || <span className="text-gray-400 italic">—</span>}
+                      </td>
+                      <td className="px-3 py-2 text-xs text-gray-700">
+                        <span className="font-semibold">🧑‍ Principal:</span> {s.principal}
+                      </td>
+                      <td className="px-3 py-2 text-xs text-gray-700">
+                        <span className="font-semibold">🤝 Ayudante:</span> {s.ayudante}
+                      </td>
+                      <td className="px-3 py-2 text-xs text-gray-700">
+                        <span className="font-semibold">🧒 Niños:</span> {s.ninos}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
+            {/* Vista móvil: tarjetas */}
             <div className="lg:hidden divide-y">
               {semanasFiltradas.map((s) => (
                 <div key={s.id} className="p-4">
@@ -295,13 +304,35 @@ export default function ReportesCliente({
                     })}
                   </p>
                   <h3 className="font-bold text-gray-800 mt-1">{s.tema}</h3>
-                  <div className="mt-2 space-y-1 text-xs text-gray-700">
-                    <p><strong>Versículos:</strong> {s.pasaje_biblico || '—'}</p>
-                    <p><strong>Versículo memo:</strong> {s.versiculo_memorizar || '—'}</p>
-                    <p><strong>Manualidad:</strong> {s.manualidad || '—'}</p>
-                    <p><strong>🧑‍🏫 Principal:</strong> {s.principal}</p>
-                    <p><strong>🤝 Ayudante:</strong> {s.ayudante}</p>
-                    <p><strong>🧒 Niños:</strong> {s.ninos}</p>
+                  <div className="mt-3 space-y-1.5 text-xs text-gray-700">
+                    <p>
+                      <span className="font-semibold text-gray-800">Versículos de estudio: </span>
+                      {s.pasaje_biblico || '—'}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">Versículo para memorizar: </span>
+                      {s.versiculo_memorizar || '—'}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">Manualidad: </span>
+                      {s.manualidad || '—'}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">Actividad de niños pequeños: </span>
+                      {s.actividad_ninos || '—'}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">🧑‍ Maestro principal: </span>
+                      {s.principal}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">🤝 Maestro ayudante: </span>
+                      {s.ayudante}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-gray-800">🧒 Maestro de niños: </span>
+                      {s.ninos}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -324,21 +355,21 @@ export default function ReportesCliente({
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Maestro</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Grupo</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Total de clases</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Maestro</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Grupo</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-gray-700">Total de clases</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {[...maestros]
-                  .sort((a, b) => b.total - a.total)
+                  .sort((a, b) => a.total - b.total)
                   .map((m) => (
                     <tr key={`${m.id}-${m.grupo}`} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm font-medium text-gray-800">
                         {m.nombres} {m.apellidos}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
-                        {m.grupo === 'Principal' && '🧑‍🏫 '}
+                        {m.grupo === 'Principal' && '🧑‍ '}
                         {m.grupo === 'Ayudante' && '🤝 '}
                         {m.grupo === 'Niños' && '🧒 '}
                         {m.grupo}
@@ -368,7 +399,6 @@ export default function ReportesCliente({
               </p>
             </div>
 
-            {/* Alerta de semanas sin actividad */}
             {semanasFiltradas.filter((s) => !s.actividad_ninos).length > 0 && (
               <div className="p-4 bg-yellow-50 border-b border-yellow-200 no-print">
                 <p className="text-xs text-yellow-800">
@@ -378,15 +408,14 @@ export default function ReportesCliente({
               </div>
             )}
 
-            {/* Vista desktop: tabla */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Tema</th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actividad para niños</th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Maestro de niños</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Fecha</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Tema</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Actividad para niños</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Maestro de niños</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -414,7 +443,6 @@ export default function ReportesCliente({
               </table>
             </div>
 
-            {/* Vista móvil: tarjetas */}
             <div className="lg:hidden divide-y">
               {semanasFiltradas.map((s) => (
                 <div key={s.id} className="p-4">
@@ -446,7 +474,6 @@ export default function ReportesCliente({
           </>
         )}
 
-        {/* Mensaje si no hay datos */}
         {((tipoReporte === 'semanas' && semanasFiltradas.length === 0) ||
           (tipoReporte === 'maestros' && maestros.length === 0) ||
           (tipoReporte === 'ninos' &&

@@ -161,7 +161,7 @@ export async function POST(request: Request) {
             <p style="color: #666; margin: 0; font-size: 14px; text-transform: capitalize;">${fechaFormateada}</p>
           </div>
 
-          <p style="color: #333;">Hola <strong>${primerNombre(principal.nombres)}</strong>,</p>
+	  <p style="color: #333;">Hola <strong>${principal.nombres} ${principal.apellidos}</strong>,</p>
           <p style="color: #333;">Te recordamos tu clase como <strong>maestro principal</strong>. Aquí están los detalles:</p>
 
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
@@ -228,7 +228,7 @@ export async function POST(request: Request) {
             <p style="color: #666; margin: 0; font-size: 14px; text-transform: capitalize;">${fechaFormateada}</p>
           </div>
 
-          <p style="color: #333;">Hola <strong>${primerNombre(maestroNinos.nombres)}</strong>,</p>
+	  <p style="color: #333;">Hola <strong>${maestroNinos.nombres} ${maestroNinos.apellidos}</strong>,</p>
           <p style="color: #333;">Te recordamos tu clase de <strong>niños pequeños</strong>. Aquí está la información:</p>
 
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">

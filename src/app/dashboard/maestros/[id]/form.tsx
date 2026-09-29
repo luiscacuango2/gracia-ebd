@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 type Maestro = {
   id: string
@@ -139,14 +140,21 @@ export default function EditarMaestroForm({ maestro }: { maestro: Maestro }) {
 
       {mensaje && <p className="text-sm text-center text-gray-700">{mensaje}</p>}
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex flex-wrap gap-3 pt-4">
         <button type="submit" disabled={cargando} className="px-6 py-2 rounded-lg text-white font-medium disabled:opacity-50" style={{ backgroundColor: '#E31E24' }}>
           {cargando ? 'Guardando...' : 'Guardar cambios'}
         </button>
+        <Link
+          href="/dashboard/maestros"
+          className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 text-center"
+        >
+          Cancelar
+        </Link>
         <button type="button" onClick={handleDelete} disabled={cargando} className="px-6 py-2 rounded-lg border border-red-600 text-red-600 font-medium hover:bg-red-50 disabled:opacity-50">
           Eliminar
         </button>
       </div>
+
     </form>
   )
 }

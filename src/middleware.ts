@@ -1,6 +1,16 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// 🆕 Rutas exclusivas para admins
+// (Reportes NO está aquí porque los maestros también pueden verlo)
+const RUTAS_ADMIN = [
+  '/dashboard/maestros',
+  '/dashboard/grupos',
+  '/dashboard/restricciones',
+  '/dashboard/rotacion-automatica',
+  '/dashboard/rotaciones',
+]
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -35,6 +45,26 @@ export async function middleware(request: NextRequest) {
   // Si hay usuario y está en login, redirigir al dashboard
   if (user && request.nextUrl.pathname === '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
+  // 🆕 Verificar permisos de admin en rutas exclusivas
+  if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
+    const esRutaAdmin = RUTAS_ADMIN.some((ruta) =>
+      request.nextUrl.pathname.startsWith(ruta)
+    )
+
+    if (esRutaAdmin) {
+      const { data: maestro } = await supabase
+        .from('maestros')
+        .select('rol')
+        .eq('correo', user.email)
+        .single()
+
+      if (maestro?.rol !== 'admin') {
+        // Redirigir al dashboard principal
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    }
   }
 
   return supabaseResponse

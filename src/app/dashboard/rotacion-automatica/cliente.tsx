@@ -8,7 +8,9 @@ type MaestroGrupo = {
   id: string
   nombres: string
   apellidos: string
-  total: number
+  totalPasadas: number
+  totalFuturas: number
+  totalTodas: number
 }
 
 type MaestroSimple = {
@@ -28,6 +30,8 @@ type Semana = {
   asignacion: any
 }
 
+type PeriodoConteo = 'todas' | 'pasadas' | 'futuras'
+
 export default function RotacionCliente({
   semanas,
   todosMaestros,
@@ -44,6 +48,7 @@ export default function RotacionCliente({
   const router = useRouter()
   const [modalConfirmacion, setModalConfirmacion] = useState(false)
   const [generando, setGenerando] = useState(false)
+  const [periodoConteo, setPeriodoConteo] = useState<PeriodoConteo>('futuras')
   const [resultado, setResultado] = useState<{
     exito: boolean
     mensaje: string
@@ -55,6 +60,7 @@ export default function RotacionCliente({
       ayudante: string
       ninos: string
       cambio: boolean
+      nota?: string
     }>
   } | null>(null)
 
@@ -87,19 +93,31 @@ export default function RotacionCliente({
     gruposInfo.ayudantes.length +
     gruposInfo.ninos.length
 
-  // 🆕 Estadísticas por grupo
+  // 🆕 Obtener el total según el periodo seleccionado
+  const getTotalPorPeriodo = (m: MaestroGrupo) => {
+    if (periodoConteo === 'pasadas') return m.totalPasadas
+    if (periodoConteo === 'futuras') return m.totalFuturas
+    return m.totalTodas
+  }
+
   const maxUsoGrupo = {
     principales: Math.max(
-      ...gruposInfo.principales.map((m) => m.total),
+      ...gruposInfo.principales.map((m) => getTotalPorPeriodo(m)),
       1
     ),
-    ayudantes: Math.max(...gruposInfo.ayudantes.map((m) => m.total), 1),
-    ninos: Math.max(...gruposInfo.ninos.map((m) => m.total), 1),
+    ayudantes: Math.max(
+      ...gruposInfo.ayudantes.map((m) => getTotalPorPeriodo(m)),
+      1
+    ),
+    ninos: Math.max(
+      ...gruposInfo.ninos.map((m) => getTotalPorPeriodo(m)),
+      1
+    ),
   }
 
   const promedioUso = (grupo: MaestroGrupo[]) => {
     if (grupo.length === 0) return 0
-    const total = grupo.reduce((acc, m) => acc + m.total, 0)
+    const total = grupo.reduce((acc, m) => acc + getTotalPorPeriodo(m), 0)
     return Math.round((total / grupo.length) * 10) / 10
   }
 
@@ -204,14 +222,53 @@ export default function RotacionCliente({
 
       {/* ===== MAESTROS DISPONIBLES POR GRUPO ===== */}
       <div className="bg-white rounded-lg shadow p-5 sm:p-6 mb-6">
-        <div className="mb-4">
-          <h2 className="text-lg font-bold text-gray-800">
-            👥 Maestros disponibles por grupo
-          </h2>
-          <p className="text-xs text-gray-500 mt-1">
-            El conteo refleja las <strong>clases impartidas</strong> de
-            cada maestro (histórico + semanas futuras asignadas).
-          </p>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">
+              👥 Maestros disponibles por grupo
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              El conteo refleja las <strong>clases dadas</strong> según el
+              periodo seleccionado.
+            </p>
+          </div>
+
+{/* Filtro de periodo */}
+<div className="flex gap-1 flex-wrap">
+  <button
+    onClick={() => setPeriodoConteo('futuras')}
+    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+      periodoConteo === 'futuras'
+        ? 'text-white'
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+    }`}
+    style={periodoConteo === 'futuras' ? { backgroundColor: '#E31E24' } : {}}
+  >
+    📅 Futuras
+  </button>
+  <button
+    onClick={() => setPeriodoConteo('pasadas')}
+    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+      periodoConteo === 'pasadas'
+        ? 'text-white'
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+    }`}
+    style={periodoConteo === 'pasadas' ? { backgroundColor: '#E31E24' } : {}}
+  >
+    📖 Pasadas
+  </button>
+  <button
+    onClick={() => setPeriodoConteo('todas')}
+    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+      periodoConteo === 'todas'
+        ? 'text-white'
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+    }`}
+    style={periodoConteo === 'todas' ? { backgroundColor: '#E31E24' } : {}}
+  >
+    📋 Todas
+  </button>
+</div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -221,6 +278,8 @@ export default function RotacionCliente({
             maestros={gruposInfo.principales}
             maxUso={maxUsoGrupo.principales}
             promedio={promedioUso(gruposInfo.principales)}
+            getTotal={getTotalPorPeriodo}
+            periodoLabel={periodoConteo}
           />
           <GrupoMaestros
             titulo="🤝 Ayudantes"
@@ -228,6 +287,8 @@ export default function RotacionCliente({
             maestros={gruposInfo.ayudantes}
             maxUso={maxUsoGrupo.ayudantes}
             promedio={promedioUso(gruposInfo.ayudantes)}
+            getTotal={getTotalPorPeriodo}
+            periodoLabel={periodoConteo}
           />
           <GrupoMaestros
             titulo="🧒 Niños pequeños"
@@ -235,6 +296,8 @@ export default function RotacionCliente({
             maestros={gruposInfo.ninos}
             maxUso={maxUsoGrupo.ninos}
             promedio={promedioUso(gruposInfo.ninos)}
+            getTotal={getTotalPorPeriodo}
+            periodoLabel={periodoConteo}
           />
         </div>
       </div>
@@ -303,9 +366,7 @@ export default function RotacionCliente({
                           : 'text-gray-800'
                       }`}
                     >
-                      {sinTemaSemana
-                        ? '(Sin tema registrado)'
-                        : s.tema}
+                      {sinTemaSemana ? '(Sin tema registrado)' : s.tema}
                     </h3>
                   </div>
                   <Link
@@ -324,9 +385,7 @@ export default function RotacionCliente({
                         {nombreDe(principalId)}
                       </span>
                     ) : (
-                      <span className="text-gray-400 italic">
-                        Sin asignar
-                      </span>
+                      <span className="text-gray-400 italic">Sin asignar</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -336,9 +395,7 @@ export default function RotacionCliente({
                         {nombreDe(ayudanteId)}
                       </span>
                     ) : (
-                      <span className="text-gray-400 italic">
-                        Sin asignar
-                      </span>
+                      <span className="text-gray-400 italic">Sin asignar</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -348,14 +405,11 @@ export default function RotacionCliente({
                         {nombreDe(ninosId)}
                       </span>
                     ) : (
-                      <span className="text-gray-400 italic">
-                        Sin asignar
-                      </span>
+                      <span className="text-gray-400 italic">Sin asignar</span>
                     )}
                   </div>
                 </div>
 
-		{/* 🆕 Actividad de niños */}
                 <div className="mt-3 pt-3 border-t text-xs">
                   <p className="text-gray-400 uppercase font-medium mb-1">
                     🧒 Actividad niños
@@ -366,7 +420,6 @@ export default function RotacionCliente({
                     )}
                   </p>
                 </div>
-
               </div>
             )
           })
@@ -450,19 +503,18 @@ export default function RotacionCliente({
                         <strong>menos ha servido</strong> históricamente.
                       </li>
                       <li>
-                        🆕 <strong>Regla de descanso:</strong> un maestro que
+                        <strong>Regla de descanso:</strong> un maestro que
                         sirvió una semana{' '}
-                        <strong>no puede servir por lo menos en las 2 semanas siguientes</strong>,
+                        <strong>no puede servir en las 4 semanas siguientes</strong>,
                         en ningún rol.
                       </li>
-<li>
-  🆕 <strong>Prioridad:</strong> se elige primero al que hace{' '}
-  <strong>más tiempo no sirve</strong> en ese rol específico, y luego al
-  que menos veces ha servido.
-</li>
                       <li>
-                        Un maestro no puede estar en{' '}
-                        <strong>dos roles la misma semana</strong>.
+                        <strong>Restricciones:</strong> respeta las parejas y
+                        maestros que no pueden servir juntos.
+                      </li>
+                      <li>
+                        <strong>Ausencias:</strong> no asigna a maestros que
+                        estén de ausencia en esa fecha.
                       </li>
                     </ul>
                   </div>
@@ -496,9 +548,7 @@ export default function RotacionCliente({
                   >
                     <p
                       className={`text-sm font-medium ${
-                        resultado.exito
-                          ? 'text-green-800'
-                          : 'text-red-800'
+                        resultado.exito ? 'text-green-800' : 'text-red-800'
                       }`}
                     >
                       {resultado.mensaje}
@@ -554,6 +604,12 @@ export default function RotacionCliente({
                                 🧒 <strong>Niños:</strong> {d.ninos}
                               </p>
                             </div>
+
+    {d.nota && (
+      <p className="text-xs text-yellow-700 mt-2 pt-2 border-t border-yellow-200">
+        {d.nota}
+      </p>
+    )}
                           </div>
                         ))}
                       </div>
@@ -584,12 +640,16 @@ function GrupoMaestros({
   maestros,
   maxUso,
   promedio,
+  getTotal,
+  periodoLabel,
 }: {
   titulo: string
   color: string
   maestros: MaestroGrupo[]
   maxUso: number
   promedio: number
+  getTotal: (m: MaestroGrupo) => number
+  periodoLabel: string
 }) {
   return (
     <div className="border border-gray-200 rounded-lg p-4">
@@ -611,7 +671,8 @@ function GrupoMaestros({
         <>
           <div className="space-y-2 mb-3 max-h-72 overflow-y-auto">
             {maestros.map((m) => {
-              const porcentaje = maxUso > 0 ? (m.total / maxUso) * 100 : 0
+              const total = getTotal(m)
+              const porcentaje = maxUso > 0 ? (total / maxUso) * 100 : 0
               return (
                 <div
                   key={m.id}
@@ -625,7 +686,7 @@ function GrupoMaestros({
                       className="text-xs font-bold whitespace-nowrap"
                       style={{ color }}
                     >
-                      {m.total} clase{m.total === 1 ? '' : 's'}
+                      {total} clase{total === 1 ? '' : 's'}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
@@ -643,7 +704,9 @@ function GrupoMaestros({
           </div>
 
           <div className="pt-3 border-t flex justify-between text-xs">
-            <span className="text-gray-500">Promedio del grupo:</span>
+            <span className="text-gray-500">
+              Promedio {periodoLabel === 'todas' ? 'total' : periodoLabel}:
+            </span>
             <span className="font-bold text-gray-700">
               {promedio} clase{promedio === 1 ? '' : 's'}
             </span>

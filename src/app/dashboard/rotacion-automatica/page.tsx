@@ -15,11 +15,18 @@ export default async function RotacionAutomaticaPage() {
   if (yo?.rol !== 'admin') redirect('/dashboard')
 
   const hoy = new Date().toISOString().split('T')[0]
+
+  // Semanas futuras (para el listado principal)
   const { data: semanas } = await supabase
     .from('semanas')
     .select('*')
     .gte('fecha', hoy)
     .order('fecha', { ascending: true })
+
+  // Todas las semanas (para los conteos)
+  const { data: todasSemanas } = await supabase
+    .from('semanas')
+    .select('id, fecha')
 
   const { data: asignaciones } = await supabase
     .from('asignaciones')
@@ -34,7 +41,6 @@ export default async function RotacionAutomaticaPage() {
     .from('grupo_maestros')
     .select('grupo_id, maestro_id')
 
-  // TODOS los maestros en un mapa (para poder mostrar cualquier nombre)
   const todosMaestros = (maestros ?? []).map((m) => ({
     id: m.id,
     nombres: m.nombres,
@@ -45,6 +51,7 @@ export default async function RotacionAutomaticaPage() {
   const mapaAsignaciones = new Map(
     (asignaciones ?? []).map((a) => [a.semana_id, a])
   )
+  const mapaSemanas = new Map((todasSemanas ?? []).map((s) => [s.id, s.fecha]))
 
   const filtroGrupo = (nombre: string) => {
     const grupoId = grupos?.find((g) => g.nombre === nombre)?.id
@@ -61,38 +68,79 @@ export default async function RotacionAutomaticaPage() {
     ninos: filtroGrupo('ninos'),
   }
 
-  // Historial de uso por maestro
-  const { data: historial } = await supabase
-    .from('asignaciones')
-    .select(`
-      maestro_principal_id,
-      maestro_ayudante_id,
-      maestro_ninos_id,
-      semanas!inner (fecha)
-    `)
-    .lt('semanas.fecha', hoy)
+  // 🆕 Contar asignaciones por periodo (pasadas, futuras, todas)
+  const contarPorPeriodo = (periodo: 'pasadas' | 'futuras' | 'todas') => {
+    const conteo = {
+      principales: new Map<string, number>(),
+      ayudantes: new Map<string, number>(),
+      ninos: new Map<string, number>(),
+    }
 
-  const conteoPrincipal = new Map<string, number>()
-  const conteoAyudante = new Map<string, number>()
-  const conteoNinos = new Map<string, number>()
+    ;(asignaciones ?? []).forEach((a) => {
+      const fecha = mapaSemanas.get(a.semana_id)
+      if (!fecha) return
 
-  ;(historial ?? []).forEach((h: any) => {
-    if (h.maestro_principal_id)
-      conteoPrincipal.set(
-        h.maestro_principal_id,
-        (conteoPrincipal.get(h.maestro_principal_id) || 0) + 1
-      )
-    if (h.maestro_ayudante_id)
-      conteoAyudante.set(
-        h.maestro_ayudante_id,
-        (conteoAyudante.get(h.maestro_ayudante_id) || 0) + 1
-      )
-    if (h.maestro_ninos_id)
-      conteoNinos.set(
-        h.maestro_ninos_id,
-        (conteoNinos.get(h.maestro_ninos_id) || 0) + 1
-      )
-  })
+      // Filtrar por periodo
+      const esPasada = fecha < hoy
+      const esFutura = fecha >= hoy
+
+      if (periodo === 'pasadas' && !esPasada) return
+      if (periodo === 'futuras' && !esFutura) return
+
+      if (a.maestro_principal_id)
+        conteo.principales.set(
+          a.maestro_principal_id,
+          (conteo.principales.get(a.maestro_principal_id) || 0) + 1
+        )
+      if (a.maestro_ayudante_id)
+        conteo.ayudantes.set(
+          a.maestro_ayudante_id,
+          (conteo.ayudantes.get(a.maestro_ayudante_id) || 0) + 1
+        )
+      if (a.maestro_ninos_id)
+        conteo.ninos.set(
+          a.maestro_ninos_id,
+          (conteo.ninos.get(a.maestro_ninos_id) || 0) + 1
+        )
+    })
+
+    return conteo
+  }
+
+  const conteoPasadas = contarPorPeriodo('pasadas')
+  const conteoFuturas = contarPorPeriodo('futuras')
+  const conteoTodas = contarPorPeriodo('todas')
+
+  // Función para mapear grupo con sus 3 conteos
+  const mapearGrupo = (grupo: any[]) =>
+    grupo.map((m: any) => ({
+      id: m.id,
+      nombres: m.nombres,
+      apellidos: m.apellidos,
+      totalPasadas: conteoPasadas.principales.get(m.id) || 0,
+      totalFuturas: conteoFuturas.principales.get(m.id) || 0,
+      totalTodas: conteoTodas.principales.get(m.id) || 0,
+    }))
+
+  const mapearGrupoAyudantes = (grupo: any[]) =>
+    grupo.map((m: any) => ({
+      id: m.id,
+      nombres: m.nombres,
+      apellidos: m.apellidos,
+      totalPasadas: conteoPasadas.ayudantes.get(m.id) || 0,
+      totalFuturas: conteoFuturas.ayudantes.get(m.id) || 0,
+      totalTodas: conteoTodas.ayudantes.get(m.id) || 0,
+    }))
+
+  const mapearGrupoNinos = (grupo: any[]) =>
+    grupo.map((m: any) => ({
+      id: m.id,
+      nombres: m.nombres,
+      apellidos: m.apellidos,
+      totalPasadas: conteoPasadas.ninos.get(m.id) || 0,
+      totalFuturas: conteoFuturas.ninos.get(m.id) || 0,
+      totalTodas: conteoTodas.ninos.get(m.id) || 0,
+    }))
 
   return (
     <RotacionCliente
@@ -103,29 +151,14 @@ export default async function RotacionAutomaticaPage() {
         pasaje_biblico: s.pasaje_biblico,
         versiculo_memorizar: s.versiculo_memorizar,
         manualidad: s.manualidad,
-	actividad_ninos: s.actividad_ninos || null, //ninos
+        actividad_ninos: s.actividad_ninos || null,
         asignacion: mapaAsignaciones.get(s.id) || null,
       }))}
       todosMaestros={todosMaestros}
       gruposInfo={{
-        principales: gruposInfo.principales.map((m: any) => ({
-          id: m.id,
-          nombres: m.nombres,
-          apellidos: m.apellidos,
-          total: conteoPrincipal.get(m.id) || 0,
-        })),
-        ayudantes: gruposInfo.ayudantes.map((m: any) => ({
-          id: m.id,
-          nombres: m.nombres,
-          apellidos: m.apellidos,
-          total: conteoAyudante.get(m.id) || 0,
-        })),
-        ninos: gruposInfo.ninos.map((m: any) => ({
-          id: m.id,
-          nombres: m.nombres,
-          apellidos: m.apellidos,
-          total: conteoNinos.get(m.id) || 0,
-        })),
+        principales: mapearGrupo(gruposInfo.principales),
+        ayudantes: mapearGrupoAyudantes(gruposInfo.ayudantes),
+        ninos: mapearGrupoNinos(gruposInfo.ninos),
       }}
     />
   )
