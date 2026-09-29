@@ -82,43 +82,29 @@ export default async function SemanasPage({
 
   return (
     <div>
-      {/* Header STICKY */}
-      <div className="sticky top-0 z-20 bg-gray-50 -mx-4 md:-mx-8 px-4 md:px-8 pt-4 md:pt-8 pb-4 mb-2 border-b border-gray-200">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+      {/* Header STICKY compacto */}
+      <div className="sticky top-0 z-20 bg-gray-50 -mx-4 md:-mx-8 px-4 md:px-8 pt-3 md:pt-4 pb-3 mb-2 border-b border-gray-200">
+        <div className="flex justify-between items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-800">
               Semanas
             </h1>
-            <p className="text-gray-600 mt-1 text-sm sm:text-base">
-              {semanas?.length ?? 0} semana
-              {semanas?.length === 1 ? '' : 's'} registrada
-              {semanas?.length === 1 ? '' : 's'}
-              {esAdmin && (
-                <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
-                  Admin
-                </span>
-              )}
-            </p>
+            <span className="text-xs text-gray-500">
+              ({semanas?.length ?? 0})
+            </span>
+            {esAdmin && (
+              <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
+                Admin
+              </span>
+            )}
           </div>
           <div className="flex gap-2 flex-wrap">
             {esAdmin && (
               <>
-                <Link
-                  href="/dashboard/reportes"
-                  className="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 font-medium hover:bg-gray-100 text-sm"
-                >
-                  📊 Reportes
-                </Link>
-                <Link
-                  href="/dashboard/rotacion-automatica"
-                  className="px-4 py-2 rounded-lg border border-red-600 text-red-600 font-medium hover:bg-red-50 text-sm"
-                >
-                  🎲 Rotación automática
-                </Link>
                 <BotonAnularAsignaciones />
                 <Link
                   href="/dashboard/semanas/nueva"
-                  className="px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 text-sm"
+                  className="px-3 py-1.5 rounded-lg text-white font-medium hover:opacity-90 text-xs"
                   style={{ backgroundColor: '#E31E24' }}
                 >
                   + Nueva semana
@@ -126,18 +112,18 @@ export default async function SemanasPage({
               </>
             )}
             {!esAdmin && (
-              <div className="text-xs text-gray-500 italic px-3 py-2 bg-white rounded-lg border border-gray-200">
-                👁 Vista de solo lectura
+              <div className="text-xs text-gray-500 italic px-2 py-1 bg-white rounded-lg border border-gray-200">
+                👁 Solo lectura
               </div>
             )}
           </div>
         </div>
 
-        {/* Filtro */}
-        <div className="mt-4 flex gap-2 flex-wrap">
+        {/* Filtro compacto */}
+        <div className="mt-2 flex gap-1.5 flex-wrap">
           <Link
             href="/dashboard/semanas?filtro=todas"
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'todas'
                 ? 'text-white'
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -148,7 +134,7 @@ export default async function SemanasPage({
           </Link>
           <Link
             href="/dashboard/semanas?filtro=futuras"
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'futuras'
                 ? 'text-white'
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -159,7 +145,7 @@ export default async function SemanasPage({
           </Link>
           <Link
             href="/dashboard/semanas?filtro=pasadas"
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'pasadas'
                 ? 'text-white'
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -172,10 +158,10 @@ export default async function SemanasPage({
       </div>
 
       {semanas && semanas.length > 0 ? (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {mostrarFuturas && proximas.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-700 mb-3">
+              <h2 className="text-base font-semibold text-gray-700 mb-2">
                 📅 Próximas semanas
               </h2>
               <div className="grid gap-4">
@@ -198,7 +184,7 @@ export default async function SemanasPage({
 
           {mostrarPasadas && pasadas.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-700 mb-3">
+              <h2 className="text-base font-semibold text-gray-700 mb-2">
                 📖 Semanas pasadas
               </h2>
               <div className="grid gap-4">
@@ -231,11 +217,6 @@ export default async function SemanasPage({
             >
               Crear primera semana
             </Link>
-          )}
-          {!esAdmin && (
-            <p className="text-xs text-gray-400">
-              Aún no hay clases programadas.
-            </p>
           )}
         </div>
       )}
@@ -403,7 +384,6 @@ function SemanaCard({
         )}
       </div>
 
-      {/* Botón Modificar maestros: SOLO admin */}
       {esAdmin && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <BotonAsignarMaestros
@@ -422,7 +402,6 @@ function SemanaCard({
         </div>
       )}
 
-      {/* Botones Enviar enlaces / Enviar recordatorios: SOLO admin */}
       {esAdmin && (
         <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
           <BotonEnviarMaestro
@@ -444,7 +423,6 @@ function SemanaCard({
         </div>
       )}
 
-      {/* Mensajes WhatsApp: para TODOS (admin ve 3, maestro ve 2) */}
       <div className="mt-4 pt-4 border-t border-gray-100">
         <p className="text-xs uppercase text-gray-400 font-medium mb-2">
           Mensajes para compartir

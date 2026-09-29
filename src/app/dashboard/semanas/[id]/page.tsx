@@ -247,18 +247,6 @@ export default async function EditarSemanaPage({
           : 'Como maestro principal de esta semana, puedes editar los datos de la clase.'}
       </p>
 
-      {/* Info de la actividad de niños */}
-      {semana.actividad_ninos && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 max-w-3xl">
-          <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
-            🧒 Actividad para niños pequeños (registrada por el maestro de niños)
-          </p>
-          <p className="text-gray-700 text-sm whitespace-pre-wrap">
-            {semana.actividad_ninos}
-          </p>
-        </div>
-      )}
-
       <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-3xl">
         <SemanaForm semana={semana} />
       </div>

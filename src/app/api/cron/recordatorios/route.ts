@@ -189,7 +189,7 @@ export async function POST(request: Request) {
 
           <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 15px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-size: 14px;">
-              💡 <strong>Recuerda:</strong> Debes cuidar a los niños hasta el final del servicio y entregarlos a sus padres.
+              💡 <strong>Recuerda:</strong> Existen materiales en la casa de niños que pueden ser utilizados para las clases.
             </p>
           </div>
 
@@ -272,7 +272,7 @@ export async function POST(request: Request) {
 
           <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 15px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-size: 14px;">
-              💡 <strong>Recuerda:</strong> Existen materiales en la casa de niños que pueden ser utilizados para las clases.
+	💡 <strong>Recuerda:</strong> Debes cuidar a los niños hasta el final del servicio y entregarlos a sus padres.
             </p>
           </div>
 

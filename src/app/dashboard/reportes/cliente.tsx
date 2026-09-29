@@ -112,7 +112,12 @@ export default function ReportesCliente({
         'Total',
       ]
       const filas = [...maestros]
-        .sort((a, b) => a.total - b.total)
+        .sort((a, b) =>
+          `${a.nombres} ${a.apellidos}`.localeCompare(
+            `${b.nombres} ${b.apellidos}`,
+            'es'
+          )
+        )
         .map((m) => [
           `${m.nombres} ${m.apellidos}`,
           m.principal,
@@ -411,7 +416,12 @@ export default function ReportesCliente({
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {[...maestros]
-                    .sort((a, b) => a.total - b.total)
+                    .sort((a, b) =>
+                      `${a.nombres} ${a.apellidos}`.localeCompare(
+                        `${b.nombres} ${b.apellidos}`,
+                        'es'
+                      )
+                    )
                     .map((m) => (
                       <tr key={m.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm font-medium text-gray-800">

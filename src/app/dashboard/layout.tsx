@@ -91,8 +91,7 @@ const adminLinks = [
   }
 
   // Ancho del menú: colapsado = 5rem (80px), expandido = 16rem (256px)
-  const anchoMenu = colapsado ? '5rem' : '16rem'
-
+const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Overlay para móvil cuando el menú está expandido */}
@@ -115,53 +114,58 @@ const adminLinks = [
         }`}
       >
         {/* Header del menú */}
-        <div className="p-4 border-b flex items-center justify-center min-h-[73px]">
+        <div className={`${colapsado && esMovil ? 'p-2' : 'p-4'} border-b flex items-center justify-center ${colapsado && esMovil ? 'min-h-[56px]' : 'min-h-[73px]'}`}>
           {!colapsado ? (
             <div className="w-full">
-              <h1
-                className="text-2xl font-bold"
-                style={{ color: '#E31E24' }}
-              >
+              <h1 className="text-2xl font-bold" style={{ color: '#E31E24' }}>
                 GRACIA
               </h1>
               <p className="text-xs text-gray-500 mt-1">Escuela Bíblica</p>
             </div>
           ) : (
-            <div
-              className="text-2xl font-bold"
-              style={{ color: '#E31E24' }}
-            >
+            <div className={`${esMovil ? 'text-xl' : 'text-2xl'} font-bold`} style={{ color: '#E31E24' }}>
               G
             </div>
           )}
         </div>
 
         {/* Botón hamburguesa */}
+
         <button
           onClick={() => setColapsado(!colapsado)}
-          className="absolute -right-3 top-20 bg-white border border-gray-200 rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-gray-50 z-50"
-          aria-label={colapsado ? 'Expandir menú' : 'Colapsar menú'}
-        >
+          className={`absolute -right-3 ${colapsado && esMovil ? 'top-14' : 'top-20'} bg-white border border-gray-200 rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-gray-50 z-50`}        >
           <span className="text-xs text-gray-600">
             {colapsado ? '▶' : '◀'}
           </span>
         </button>
 
         {/* Navegación */}
-        <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
+        <nav className={`${colapsado ? 'p-2' : 'p-3'} space-y-1 flex-1 overflow-y-auto`}>
+          {/* Sección: General */}
+          {!colapsado && (
+            <div className="pt-2 pb-1 px-3">
+              <p className="text-xs uppercase text-gray-400 font-medium">
+                General
+              </p>
+            </div>
+          )}
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => esMovil && setColapsado(true)}
-              className={`flex items-center gap-3 px-3 py-3 rounded-lg transition ${
+              className={`flex items-center rounded-lg transition ${
+                colapsado
+                  ? 'justify-center py-3 px-0'
+                  : 'gap-3 px-3 py-3'
+              } ${
                 esActivo(link.href, link.exact)
                   ? 'bg-red-50 text-red-700 font-medium'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
               title={colapsado ? link.label : undefined}
             >
-              <span className="text-xl flex-shrink-0">{link.icon}</span>
+              <span className={`${colapsado ? 'text-2xl' : 'text-xl'} flex-shrink-0`}>{link.icon}</span>
               {!colapsado && (
                 <span className="text-sm truncate">{link.label}</span>
               )}
@@ -170,28 +174,35 @@ const adminLinks = [
 
           {esAdmin && (
             <>
-              {!colapsado && (
-                <div className="pt-4 pb-2 px-3">
-                  <p className="text-xs uppercase text-gray-400 font-medium">
-                    Administración
-                  </p>
-                </div>
-              )}
-              {colapsado && <div className="border-t my-3" />}
+              <div className={`${colapsado ? 'mt-2 pt-2' : 'pt-5 mt-4'} border-t`}>
+                {!colapsado ? (
+                  <div className="pt-1 pb-2 px-3">
+                    <p className="text-xs uppercase text-gray-400 font-medium">
+                      Administración
+                    </p>
+                  </div>
+                ) : (
+                  <div className="pb-2" />
+                )}
+              </div>
 
               {adminLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => esMovil && setColapsado(true)}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition ${
+                  className={`flex items-center rounded-lg transition ${
+                    colapsado
+                      ? 'justify-center py-3 px-0'
+                      : 'gap-3 px-3 py-3'
+                  } ${
                     esActivo(link.href)
                       ? 'bg-red-50 text-red-700 font-medium'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                   title={colapsado ? link.label : undefined}
                 >
-                  <span className="text-xl flex-shrink-0">{link.icon}</span>
+                  <span className={`${colapsado ? 'text-2xl' : 'text-xl'} flex-shrink-0`}>{link.icon}</span>
                   {!colapsado && (
                     <span className="text-sm truncate">{link.label}</span>
                   )}
@@ -199,19 +210,23 @@ const adminLinks = [
               ))}
             </>
           )}
+
         </nav>
 
         {/* Footer del menú */}
-        <div className="p-3 border-t bg-white">
+
+        <div className={`${colapsado ? 'p-2' : 'p-3'} border-t bg-white`}>
           {!colapsado ? (
             <>
-	<Link
-	  href="/dashboard/perfil"
-	  className="block text-xs text-gray-500 truncate font-medium hover:text-red-600"
-	>
-	  {maestro ? `${maestro.nombres} ${maestro.apellidos}` : 'Usuario'}
-	</Link>
-	<p className="text-xs text-gray-400 truncate">{maestro?.correo}</p>
+              <Link
+                href="/dashboard/perfil"
+                className="block text-xs text-gray-500 truncate font-medium hover:text-red-600"
+              >
+                {maestro ? `${maestro.nombres} ${maestro.apellidos}` : 'Usuario'}
+              </Link>
+              <p className="text-xs text-gray-400 truncate">
+                {maestro?.correo}
+              </p>
               {esAdmin && (
                 <span className="inline-block mt-1 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
                   Admin
@@ -227,13 +242,14 @@ const adminLinks = [
           ) : (
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center text-xl hover:bg-gray-100 rounded-lg py-2"
+              className="w-full flex items-center justify-center text-2xl hover:bg-gray-100 rounded-lg py-2"
               title="Cerrar sesión"
             >
               🚪
             </button>
           )}
         </div>
+
       </aside>
 
       {/* Contenido principal - se desplaza según el menú */}

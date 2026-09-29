@@ -92,9 +92,10 @@ export default function BotonAnularAsignaciones() {
     <>
       <button
         onClick={handleAbrir}
-        className="px-4 py-2 rounded-lg border border-orange-600 text-orange-600 font-medium hover:bg-orange-50 text-sm"
+        className="px-3 py-1.5 rounded-lg border border-orange-600 text-orange-600 font-medium hover:bg-orange-50 text-xs whitespace-nowrap inline-flex items-center"
       >
-        🗑️ Anular asignaciones
+        <span className="hidden sm:inline">🗑️ Anular asignaciones</span>
+        <span className="sm:hidden">🗑️ Anular</span>
       </button>
 
       {abierto && (
