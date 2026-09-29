@@ -41,6 +41,7 @@ export default async function ReportesPage() {
     (asignaciones ?? []).map((a) => [a.semana_id, a])
   )
 
+  // Conteos por maestro y por rol
   const conteoPrincipal = new Map<string, number>()
   const conteoAyudante = new Map<string, number>()
   const conteoNinos = new Map<string, number>()
@@ -81,6 +82,50 @@ export default async function ReportesPage() {
   const maestrosAyudantes = filtroGrupo('ayudantes') as { id: string; nombres: string; apellidos: string }[]
   const maestrosNinos = filtroGrupo('ninos') as { id: string; nombres: string; apellidos: string }[]
 
+  // 🆕 Consolidar: una fila por maestro único con conteos por rol
+  const idsUnicos = new Set<string>()
+  ;[...maestrosPrincipales, ...maestrosAyudantes, ...maestrosNinos].forEach(
+    (m) => idsUnicos.add(m.id)
+  )
+
+  let maestrosConsolidados = Array.from(idsUnicos)
+    .map((id) => {
+      const maestro =
+        maestrosPrincipales.find((m) => m.id === id) ||
+        maestrosAyudantes.find((m) => m.id === id) ||
+        maestrosNinos.find((m) => m.id === id)
+
+      if (!maestro) return null
+
+      const principal = conteoPrincipal.get(id) || 0
+      const ayudante = conteoAyudante.get(id) || 0
+      const ninos = conteoNinos.get(id) || 0
+
+      return {
+        id,
+        nombres: maestro.nombres,
+        apellidos: maestro.apellidos,
+        principal,
+        ayudante,
+        ninos,
+        total: principal + ayudante + ninos,
+      }
+    })
+    .filter(Boolean) as {
+    id: string
+    nombres: string
+    apellidos: string
+    principal: number
+    ayudante: number
+    ninos: number
+    total: number
+  }[]
+
+  // Si no es admin, solo ve su propia fila
+  if (!esAdmin) {
+    maestrosConsolidados = maestrosConsolidados.filter((m) => m.id === yo.id)
+  }
+
   // Filtrar semanas según rol
   const semanasParaMostrar = esAdmin
     ? (semanas ?? [])
@@ -116,32 +161,10 @@ export default async function ReportesPage() {
     }
   })
 
-  let maestrosConConteos = [
-    ...maestrosPrincipales.map((m) => ({
-      ...m,
-      grupo: 'Principal',
-      total: conteoPrincipal.get(m.id) || 0,
-    })),
-    ...maestrosAyudantes.map((m) => ({
-      ...m,
-      grupo: 'Ayudante',
-      total: conteoAyudante.get(m.id) || 0,
-    })),
-    ...maestrosNinos.map((m) => ({
-      ...m,
-      grupo: 'Niños',
-      total: conteoNinos.get(m.id) || 0,
-    })),
-  ]
-
-  if (!esAdmin) {
-    maestrosConConteos = maestrosConConteos.filter((m) => m.id === yo.id)
-  }
-
   return (
     <ReportesCliente
       semanas={semanasConDatos}
-      maestros={maestrosConConteos}
+      maestros={maestrosConsolidados}
       esAdmin={esAdmin}
       nombreUsuario={`${yo.nombres} ${yo.apellidos}`}
     />

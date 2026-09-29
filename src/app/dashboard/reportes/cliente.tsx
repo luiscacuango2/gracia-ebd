@@ -20,7 +20,9 @@ type MaestroConteo = {
   id: string
   nombres: string
   apellidos: string
-  grupo: string
+  principal: number
+  ayudante: number
+  ninos: number
   total: number
 }
 
@@ -102,10 +104,30 @@ export default function ReportesCliente({
       ])
       descargarCSV(headers, filas, 'reporte_semanas')
     } else if (tipoReporte === 'maestros') {
-      const headers = ['Maestro', 'Grupo', 'Total de clases']
+      const headers = [
+        'Maestro',
+        'Principal',
+        'Ayudante',
+        'Niños',
+        'Total',
+      ]
       const filas = [...maestros]
         .sort((a, b) => a.total - b.total)
-        .map((m) => [`${m.nombres} ${m.apellidos}`, m.grupo, m.total])
+        .map((m) => [
+          `${m.nombres} ${m.apellidos}`,
+          m.principal,
+          m.ayudante,
+          m.ninos,
+          m.total,
+        ])
+      // Agregar fila de totales
+      filas.push([
+        'TOTALES',
+        maestros.reduce((sum, m) => sum + m.principal, 0),
+        maestros.reduce((sum, m) => sum + m.ayudante, 0),
+        maestros.reduce((sum, m) => sum + m.ninos, 0),
+        maestros.reduce((sum, m) => sum + m.total, 0),
+      ])
       descargarCSV(headers, filas, 'reporte_maestros')
     } else {
       const headers = ['Fecha', 'Tema', 'Actividad para niños', 'Maestro de niños']
@@ -270,7 +292,7 @@ export default function ReportesCliente({
           <p className="text-base font-semibold text-gray-800 italic mb-1">
             "La Casa de Su Amor y Su Poder"
           </p>
-          <p className="text-xs text-gray-700 max-w-2xl mx-auto mt-3">
+          <p className="text-sm text-gray-700 max-w-2xl mx-auto mt-3">
             <strong>Ministerio de niños:</strong> "Jesús dijo: «Dejen que los
             niños vengan a mí; no se lo impidan, porque el reino de los cielos
             es de quienes son como ellos»" — Mateo 19:14 NVI
@@ -283,7 +305,7 @@ export default function ReportesCliente({
           <>
             <div className="p-4 border-b bg-gray-50 no-print">
               <h2 className="font-semibold text-gray-800">{tituloReporte}</h2>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 {semanasFiltradas.length} semana
                 {semanasFiltradas.length === 1 ? '' : 's'}
                 {mesSeleccionado && ` · ${MESES[parseInt(mesSeleccionado.split('-')[1]) - 1]} ${mesSeleccionado.split('-')[0]}`}
@@ -296,37 +318,37 @@ export default function ReportesCliente({
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Fecha</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Tema</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Versículos de estudio</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Versículo para memorizar</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Manualidad</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">Actividad de niños pequeños</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🧑‍🏫 Maestro principal</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🤝 Maestro ayudante</th>
-                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-700">🧒 Maestro de niños</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Fecha</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Tema</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Versículos de estudio</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Versículo para memorizar</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Manualidad</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">Actividad de niños pequeños</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">🧑‍🏫 Maestro principal</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">🤝 Maestro ayudante</th>
+                    <th className="text-left px-3 py-2 text-sm font-semibold text-gray-700">🧒 Maestro de niños</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {semanasFiltradas.map((s) => (
                     <tr key={s.id} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 text-xs text-gray-700 whitespace-nowrap">
+                      <td className="px-3 py-2 text-sm text-gray-700 whitespace-nowrap">
                         {new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </td>
                       <td className="px-3 py-2 text-sm font-medium text-gray-800">{s.tema}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600">{s.pasaje_biblico || '—'}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600">{s.versiculo_memorizar || '—'}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600">{s.manualidad || '—'}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600">
+                      <td className="px-3 py-2 text-sm text-gray-600">{s.pasaje_biblico || '—'}</td>
+                      <td className="px-3 py-2 text-sm text-gray-600">{s.versiculo_memorizar || '—'}</td>
+                      <td className="px-3 py-2 text-sm text-gray-600">{s.manualidad || '—'}</td>
+                      <td className="px-3 py-2 text-sm text-gray-600">
                         {s.actividad_ninos || <span className="text-gray-400 italic">—</span>}
                       </td>
-                      <td className="px-3 py-2 text-xs text-gray-700">
+                      <td className="px-3 py-2 text-sm text-gray-700">
                         <span className="font-semibold">🧑‍🏫Principal:</span>{s.principal}
                       </td>
-                      <td className="px-3 py-2 text-xs text-gray-700">
+                      <td className="px-3 py-2 text-sm text-gray-700">
                         <span className="font-semibold">🤝Ayudante:</span>{s.ayudante}
                       </td>
-                      <td className="px-3 py-2 text-xs text-gray-700">
+                      <td className="px-3 py-2 text-sm text-gray-700">
                         <span className="font-semibold">🧒Niños:</span>{s.ninos}
                       </td>
                     </tr>
@@ -338,11 +360,11 @@ export default function ReportesCliente({
             <div className="lg:hidden divide-y">
               {semanasFiltradas.map((s) => (
                 <div key={s.id} className="p-4">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-500">
                     {new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                   <h3 className="font-bold text-gray-800 mt-1">{s.tema}</h3>
-                  <div className="mt-3 space-y-1.5 text-xs text-gray-700">
+                  <div className="mt-3 space-y-1.5 text-sm text-gray-700">
                     <p><span className="font-semibold text-gray-800">Versículos de estudio: </span>{s.pasaje_biblico || '—'}</p>
                     <p><span className="font-semibold text-gray-800">Versículo para memorizar: </span>{s.versiculo_memorizar || '—'}</p>
                     <p><span className="font-semibold text-gray-800">Manualidad: </span>{s.manualidad || '—'}</p>
@@ -361,32 +383,76 @@ export default function ReportesCliente({
           <>
             <div className="p-4 border-b bg-gray-50 no-print">
               <h2 className="font-semibold text-gray-800">Reporte de maestros</h2>
-              <p className="text-xs text-gray-500 mt-1">{maestros.length} maestro{maestros.length === 1 ? '' : 's'} en total</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {maestros.length} maestro{maestros.length === 1 ? '' : 's'} en total
+              </p>
             </div>
 
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Maestro</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Grupo</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-gray-700">Total de clases</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {[...maestros].sort((a, b) => a.total - b.total).map((m) => (
-                  <tr key={`${m.id}-${m.grupo}`} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-800">{m.nombres} {m.apellidos}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {m.grupo === 'Principal' && '🧑‍🏫 '}
-                      {m.grupo === 'Ayudante' && '🤝 '}
-                      {m.grupo === 'Niños' && '🧒 '}
-                      {m.grupo}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right font-bold text-gray-800">{m.total}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">
+                      Maestro
+                    </th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700">
+                      🧑‍🏫 Principal
+                    </th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700">
+                      🤝 Ayudante
+                    </th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700">
+                      🧒 Niños
+                    </th>
+                    <th className="text-center px-3 py-3 text-sm font-bold text-gray-800 bg-gray-100">
+                      Total
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {[...maestros]
+                    .sort((a, b) => a.total - b.total)
+                    .map((m) => (
+                      <tr key={m.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-800">
+                          {m.nombres} {m.apellidos}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center text-gray-700">
+                          {m.principal > 0 ? m.principal : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center text-gray-700">
+                          {m.ayudante > 0 ? m.ayudante : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center text-gray-700">
+                          {m.ninos > 0 ? m.ninos : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 bg-gray-50">
+                          {m.total}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+                <tfoot className="bg-gray-100 border-t-2">
+                  <tr>
+                    <td className="px-4 py-3 text-sm font-bold text-gray-800">
+                      TOTALES
+                    </td>
+                    <td className="px-3 py-3 text-sm text-center font-bold text-gray-900">
+                      {maestros.reduce((sum, m) => sum + m.principal, 0)}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-center font-bold text-gray-900">
+                      {maestros.reduce((sum, m) => sum + m.ayudante, 0)}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-center font-bold text-gray-900">
+                      {maestros.reduce((sum, m) => sum + m.ninos, 0)}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 bg-gray-200">
+                      {maestros.reduce((sum, m) => sum + m.total, 0)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </>
         )}
 
@@ -394,7 +460,7 @@ export default function ReportesCliente({
           <>
             <div className="p-4 border-b bg-gray-50 no-print">
               <h2 className="font-semibold text-gray-800">🧒 Reporte de actividades de niños pequeños</h2>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 {semanasFiltradas.filter((s) => s.actividad_ninos).length} semana
                 {semanasFiltradas.filter((s) => s.actividad_ninos).length === 1 ? '' : 's'} con actividad registrada
                 {fechaDesde && ` desde ${fechaDesde}`}
@@ -404,7 +470,7 @@ export default function ReportesCliente({
 
             {semanasFiltradas.filter((s) => !s.actividad_ninos).length > 0 && (
               <div className="p-4 bg-yellow-50 border-b border-yellow-200 no-print">
-                <p className="text-xs text-yellow-800">
+                <p className="text-sm text-yellow-800">
                   ⚠️ {semanasFiltradas.filter((s) => !s.actividad_ninos).length} semana
                   {semanasFiltradas.filter((s) => !s.actividad_ninos).length === 1 ? '' : 's'} aún sin actividad registrada.
                 </p>
@@ -415,21 +481,21 @@ export default function ReportesCliente({
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Fecha</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Tema</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Actividad para niños</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700">Maestro de niños</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Fecha</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Tema</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Actividad para niños</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">Maestro de niños</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {semanasFiltradas.map((s) => (
                     <tr key={s.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-xs text-gray-700 whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                         {new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-gray-800">{s.tema}</td>
                       <td className="px-4 py-3 text-sm text-gray-700">
-                        {s.actividad_ninos ? s.actividad_ninos : <span className="text-yellow-600 italic text-xs">Sin registrar</span>}
+                        {s.actividad_ninos ? s.actividad_ninos : <span className="text-yellow-600 italic text-sm">Sin registrar</span>}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">{s.ninos}</td>
                     </tr>
@@ -441,11 +507,11 @@ export default function ReportesCliente({
             <div className="lg:hidden divide-y">
               {semanasFiltradas.map((s) => (
                 <div key={s.id} className="p-4">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-500">
                     {new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                   <h3 className="font-bold text-gray-800 mt-1">{s.tema}</h3>
-                  <div className="mt-2 space-y-1 text-xs">
+                  <div className="mt-2 space-y-1 text-sm">
                     <p className="text-gray-700">
                       <strong>🧒 Actividad:</strong>{' '}
                       {s.actividad_ninos ? s.actividad_ninos : <span className="text-yellow-600 italic">Sin registrar</span>}
@@ -462,6 +528,22 @@ export default function ReportesCliente({
           (tipoReporte === 'maestros' && esAdmin && maestros.length === 0) ||
           (tipoReporte === 'ninos' && semanasFiltradas.filter((s) => s.actividad_ninos).length === 0)) && (
           <div className="p-12 text-center text-gray-500">No hay datos para mostrar con los filtros seleccionados.</div>
+        )}
+
+        {/* RESPONSABILIDADES DE LOS MAESTROS */}
+        {(tipoReporte === 'semanas' || tipoReporte === 'ninos') && semanasFiltradas.length > 0 && (
+          <div className="p-6 border-t bg-gray-50">
+            <h3 className="text-lg font-bold text-gray-800 mb-3">
+              Responsabilidades de los maestros:
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-700 list-disc list-inside">
+              <li>Estar 08:30 a.m. en la iglesia para coordinar la clase con el maestro principal.</li>
+              <li>Sacar las sillas y las mesas para la clase.</li>
+              <li>Cuidar la casa de niños y no dejar que ingresen a la misma.</li>
+              <li>Mantener en orden la casa de niños y cuidar de los materiales existentes.</li>
+              <li>Existen materiales en la casa de niños que pueden ser utilizados para las clases.</li>
+            </ul>
+          </div>
         )}
       </div>
     </div>
