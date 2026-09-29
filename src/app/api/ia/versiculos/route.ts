@@ -49,14 +49,17 @@ Ahora responde para el tema "${tema}":`
       return NextResponse.json(
         {
           exito: false,
-          mensaje: 'Error al consultar la IA: ' + (errorData.error?.message || response.status),
+          mensaje:
+            'Error al consultar la IA: ' +
+            (errorData.error?.message || response.status),
         },
         { status: 500 }
       )
     }
 
     const data = await response.json()
-    let textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    let textoRespuesta: string =
+      data.candidates?.[0]?.content?.parts?.[0]?.text || ''
 
     textoRespuesta = textoRespuesta
       .replace(/```/g, '')
@@ -64,11 +67,12 @@ Ahora responde para el tema "${tema}":`
       .replace(/^[-•]\s*/gm, '')
       .trim()
 
-    const lineas = textoRespuesta
+    const lineas: string[] = textoRespuesta
       .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0)
-    const versiculosLimpios = lineas[0] || textoRespuesta
+      .map((l: string) => l.trim())
+      .filter((l: string) => l.length > 0)
+
+    const versiculosLimpios: string = lineas[0] || textoRespuesta
 
     if (!versiculosLimpios) {
       return NextResponse.json(
