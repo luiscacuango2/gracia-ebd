@@ -190,7 +190,7 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 │  Auth        │   │   SMTP       │   │  Deep Links  │
 │  RLS         │   │   Templates  │   │              │
 └──────────────┘   └──────────────┘   └──────────────┘
-### Flujo de Autenticación
+## 🔐 Flujo de Autenticación
 
 ```text
 1. Usuario ingresa su correo en /login
@@ -203,7 +203,7 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 8. Usuario accede al dashboard según su rol
 ```
 
-### Flujo de Rotación Automática
+## 🎲 Flujo de Rotación Automática
 
 ```text
 1. Admin hace clic en "Generar asignaciones"
@@ -218,6 +218,9 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
    c. Guarda la asignación en la BD
 4. Retorna resumen + detalle semana por semana
 ```
+
+---
+
 ## 🗄 Modelo de Datos
 
 ### Diagrama Entidad-Relación
@@ -276,19 +279,6 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 └─────────────────┘     └─────────────────┘
 ```
 
-### Tablas Principales
-
-| Tabla | Descripción |
-| :--- | :--- |
-| `maestros` | Registro de todos los maestros con rol y datos personales. |
-| `semanas` | Cada clase de la EBD con tema, versículos y actividad de niños. |
-| `asignaciones` | Relación entre semanas y maestros (3 roles por semana). |
-| `grupos` | Categorías: Principales, Ayudantes, Niños pequeños. |
-| `grupo_maestros` | Relación N:M entre maestros y grupos. |
-| `rotaciones` | Historial de cambios en asignaciones con motivo. |
-| `restricciones_maestros` | Parejas que no pueden servir juntas. |
-| `ausencias_maestros` | Periodos de ausencia programada. |
-| `logs_correos` | Registro de correos enviados. |
 ### Tablas Principales
 
 | Tabla | Descripción |
@@ -552,6 +542,8 @@ npm run lint      # Ejecuta ESLint para validar código
 3. Haz commit de tus cambios: `git commit -m 'Add: nueva funcionalidad'`.
 4. Haz push a la rama: `git push origin feature/NuevaFuncionalidad`.
 5. Abre un **Pull Request**.
+
+Para más detalles, consulta nuestra [Guía de Contribución](CONTRIBUTING.md).
 
 ---
 
