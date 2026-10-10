@@ -44,7 +44,7 @@ Crea una copia del repositorio en tu cuenta de GitHub haciendo clic en el botón
 ```bash
 git clone https://github.com/TU-USUARIO/gracia-ebd.git
 cd gracia-ebd
-## 🔄 Flujo de Trabajo (Workflow)
+```
 
 ### 3. Configurar el Remote Upstream
 
