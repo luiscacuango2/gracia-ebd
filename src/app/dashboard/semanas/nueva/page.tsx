@@ -3,14 +3,14 @@ import SemanaForm from '../form'
 export default function NuevaSemanaPage() {
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         Nueva Semana
       </h1>
-      <p className="text-gray-600 mb-8">
+      <p className="text-gray-600 dark:text-gray-400 mb-8">
         Registra el tema, pasaje, versículo y manualidad de esta clase.
       </p>
 
-      <div className="bg-white rounded-lg shadow p-6 max-w-3xl">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 max-w-3xl">
         <SemanaForm />
       </div>
     </div>

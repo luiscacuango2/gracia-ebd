@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function DashboardLayout({
   children,
@@ -58,18 +60,18 @@ export default function DashboardLayout({
   const esAdmin = maestro?.rol === 'admin'
 
   const links = [
-    { href: '/dashboard', label: 'Inicio', icon: '📊', exact: true },
+    { href: '/dashboard', label: 'Inicio', icon: '🏠', exact: true },
     { href: '/dashboard/semanas', label: 'Semanas', icon: '📅' },
     { href: '/dashboard/reportes', label: 'Reportes', icon: '📊' },
   ]
 
-const adminLinks = [
-  { href: '/dashboard/maestros', label: 'Maestros', icon: '🧑‍' },
-  { href: '/dashboard/grupos', label: 'Grupos de maestros', icon: '👥' },
-  { href: '/dashboard/restricciones', label: 'Restricciones y ausencias', icon: '🚫' },
-  { href: '/dashboard/rotacion-automatica', label: 'Rotación automática', icon: '🎲' },
-  { href: '/dashboard/rotaciones', label: 'Historial de cambios', icon: '🔄' },
-]
+  const adminLinks = [
+    { href: '/dashboard/maestros', label: 'Maestros', icon: '🧑‍' },
+    { href: '/dashboard/grupos', label: 'Grupos de maestros', icon: '👥' },
+    { href: '/dashboard/restricciones', label: 'Restricciones y ausencias', icon: '🚫' },
+    { href: '/dashboard/rotacion-automatica', label: 'Rotación automática', icon: '🎲' },
+    { href: '/dashboard/rotaciones', label: 'Historial de cambios', icon: '🔄' },
+  ]
   const esActivo = (href: string, exact = false) => {
     if (exact) return pathname === href
     return pathname.startsWith(href)
@@ -91,9 +93,9 @@ const adminLinks = [
   }
 
   // Ancho del menú: colapsado = 5rem (80px), expandido = 16rem (256px)
-const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
+  const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Overlay para móvil cuando el menú está expandido */}
       {esMovil && !colapsado && (
         <div
@@ -109,24 +111,29 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
           left: 0,
           top: 0,
         }}
-        className={`bg-white shadow-lg flex flex-col transition-all duration-300 ease-in-out z-40 ${
-          esMovil ? 'fixed h-full' : 'fixed h-full'
-        }`}
+        className={`bg-white dark:bg-gray-800 shadow-lg flex flex-col transition-all duration-300 ease-in-out z-40 ${esMovil ? 'fixed h-full' : 'fixed h-full'
+          }`}
       >
         {/* Header del menú */}
-        <div className={`${colapsado && esMovil ? 'p-2' : 'p-4'} border-b flex items-center justify-center ${colapsado && esMovil ? 'min-h-[56px]' : 'min-h-[73px]'}`}>
+        <div className={`${colapsado && esMovil ? 'p-2' : 'p-3'} border-b flex items-center justify-between gap-2 ${colapsado && esMovil ? 'min-h-[56px]' : 'min-h-[73px]'} bg-white dark:bg-gray-800`}>
           {!colapsado ? (
-            <div className="w-full">
-              <h1 className="text-2xl font-bold" style={{ color: '#E31E24' }}>
-                GRACIA
-              </h1>
-              <p className="text-xs text-gray-500 mt-1">Escuela Bíblica</p>
+            <div className="flex-1 min-w-0">
+              <Image
+                src="/logo.png"
+                alt="Gracia Iglesia Cristiana"
+                width={160}
+                height={60}
+                className="object-contain"
+                style={{ width: '100%', height: 'auto' }}
+                priority
+              />
             </div>
           ) : (
-            <div className={`${esMovil ? 'text-xl' : 'text-2xl'} font-bold`} style={{ color: '#E31E24' }}>
+            <div className={`${esMovil ? 'text-xl' : 'text-2xl'} font-bold flex-1 text-center`} style={{ color: '#E31E24' }}>
               G
             </div>
           )}
+          <ThemeToggle />
         </div>
 
         {/* Botón hamburguesa */}
@@ -154,18 +161,16 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
               key={link.href}
               href={link.href}
               onClick={() => esMovil && setColapsado(true)}
-              className={`flex items-center rounded-lg transition ${
-                colapsado
-                  ? 'justify-center py-3 px-0'
-                  : 'gap-3 px-3 py-3'
-              } ${
-                esActivo(link.href, link.exact)
-                  ? 'bg-red-50 text-red-700 font-medium'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`flex items-center rounded-lg transition ${colapsado
+                ? 'justify-center py-3 px-0'
+                : 'gap-3 px-3 py-3'
+                } ${esActivo(link.href, link.exact)
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
               title={colapsado ? link.label : undefined}
             >
-              <span className={`${colapsado ? 'text-2xl' : 'text-xl'} flex-shrink-0`}>{link.icon}</span>
+              <span className={`${colapsado ? 'text-2xl' : 'text-xl'} shrink-0`}>{link.icon}</span>
               {!colapsado && (
                 <span className="text-sm truncate">{link.label}</span>
               )}
@@ -191,18 +196,16 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
                   key={link.href}
                   href={link.href}
                   onClick={() => esMovil && setColapsado(true)}
-                  className={`flex items-center rounded-lg transition ${
-                    colapsado
-                      ? 'justify-center py-3 px-0'
-                      : 'gap-3 px-3 py-3'
-                  } ${
-                    esActivo(link.href)
-                      ? 'bg-red-50 text-red-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`flex items-center rounded-lg transition ${colapsado
+                    ? 'justify-center py-3 px-0'
+                    : 'gap-3 px-3 py-3'
+                    } ${esActivo(link.href)
+                      ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
                   title={colapsado ? link.label : undefined}
                 >
-                  <span className={`${colapsado ? 'text-2xl' : 'text-xl'} flex-shrink-0`}>{link.icon}</span>
+                  <span className={`${colapsado ? 'text-2xl' : 'text-xl'} shrink-0`}>{link.icon}</span>
                   {!colapsado && (
                     <span className="text-sm truncate">{link.label}</span>
                   )}
@@ -215,16 +218,16 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
 
         {/* Footer del menú */}
 
-        <div className={`${colapsado ? 'p-2' : 'p-3'} border-t bg-white`}>
+        <div className={`${colapsado ? 'p-2' : 'p-3'} border-t bg-white dark:bg-gray-800 dark:border-gray-700`}>
           {!colapsado ? (
             <>
               <Link
                 href="/dashboard/perfil"
-                className="block text-xs text-gray-500 truncate font-medium hover:text-red-600"
+                className="block text-xs text-gray-500 dark:text-gray-300 truncate font-medium hover:text-red-600"
               >
                 {maestro ? `${maestro.nombres} ${maestro.apellidos}` : 'Usuario'}
               </Link>
-              <p className="text-xs text-gray-400 truncate">
+              <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
                 {maestro?.correo}
               </p>
               {esAdmin && (
@@ -234,7 +237,7 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
               )}
               <button
                 onClick={handleLogout}
-                className="mt-2 text-sm text-red-600 hover:underline block"
+                className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline block"
               >
                 Cerrar sesión
               </button>
@@ -253,12 +256,12 @@ const anchoMenu = colapsado ? (esMovil ? '3rem' : '5rem') : '16rem'
       </aside>
 
       {/* Contenido principal - se desplaza según el menú */}
-<main
-  style={{ marginLeft: anchoMenu }}
-  className="min-h-screen transition-all duration-300 ease-in-out"
->
-  <div className="p-4 md:p-8">{children}</div>
-</main>
+      <main
+        style={{ marginLeft: anchoMenu }}
+        className="min-h-screen transition-all duration-300 ease-in-out"
+      >
+        <div className="p-4 md:p-8">{children}</div>
+      </main>
     </div>
   )
 }

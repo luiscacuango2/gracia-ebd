@@ -29,7 +29,6 @@ export default function BotonAnularAsignaciones() {
     setAbierto(true)
     setMensaje('')
     setResultado(null)
-    // Por defecto: hoy hasta 3 meses en el futuro
     const hoy = new Date().toISOString().split('T')[0]
     const futuro = new Date()
     futuro.setMonth(futuro.getMonth() + 3)
@@ -92,7 +91,7 @@ export default function BotonAnularAsignaciones() {
     <>
       <button
         onClick={handleAbrir}
-        className="px-3 py-1.5 rounded-lg border border-orange-600 text-orange-600 font-medium hover:bg-orange-50 text-xs whitespace-nowrap inline-flex items-center"
+        className="px-3 py-1.5 rounded-lg border border-orange-600 dark:border-orange-500 text-orange-600 dark:text-orange-400 font-medium hover:bg-orange-50 dark:hover:bg-orange-900/20 text-xs whitespace-nowrap inline-flex items-center"
       >
         <span className="hidden sm:inline">🗑️ Anular asignaciones</span>
         <span className="sm:hidden">🗑️ Anular</span>
@@ -104,16 +103,16 @@ export default function BotonAnularAsignaciones() {
           onClick={cerrar}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-800">
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                 🗑️ Anular asignaciones
               </h2>
               <button
                 onClick={cerrar}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
               >
                 ×
               </button>
@@ -122,8 +121,8 @@ export default function BotonAnularAsignaciones() {
             <div className="p-6 space-y-5">
               {!resultado ? (
                 <>
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                    <p className="text-xs text-orange-800">
+                  <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg p-3">
+                    <p className="text-xs text-orange-800 dark:text-orange-300">
                       ⚠️ Esta acción quitará las asignaciones de los maestros
                       en las semanas dentro del rango de fechas. Se registrará
                       en el historial de rotaciones.
@@ -132,26 +131,26 @@ export default function BotonAnularAsignaciones() {
 
                   {/* Rango de fechas */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       📅 Rango de fechas
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Desde</label>
+                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Desde</label>
                         <input
                           type="date"
                           value={fechaDesde}
                           onChange={(e) => setFechaDesde(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Hasta</label>
+                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Hasta</label>
                         <input
                           type="date"
                           value={fechaHasta}
                           onChange={(e) => setFechaHasta(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
@@ -160,48 +159,48 @@ export default function BotonAnularAsignaciones() {
                   {/* Selector de roles */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         🎯 ¿Qué quieres quitar?
                       </label>
                       <button
                         type="button"
                         onClick={toggleTodos}
-                        className="text-xs text-orange-600 hover:underline font-medium"
+                        className="text-xs text-orange-600 dark:text-orange-400 hover:underline font-medium"
                       >
                         {todosMarcados ? 'Desmarcar todos' : 'Marcar todos'}
                       </button>
                     </div>
                     <div className="space-y-2">
-                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                         <input
                           type="checkbox"
                           checked={quitarPrincipal}
                           onChange={(e) => setQuitarPrincipal(e.target.checked)}
                           className="w-4 h-4"
                         />
-                        <span className="text-sm text-gray-800">
+                        <span className="text-sm text-gray-800 dark:text-gray-200">
                           🧑‍🏫 Maestro principal
                         </span>
                       </label>
-                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                         <input
                           type="checkbox"
                           checked={quitarAyudante}
                           onChange={(e) => setQuitarAyudante(e.target.checked)}
                           className="w-4 h-4"
                         />
-                        <span className="text-sm text-gray-800">
+                        <span className="text-sm text-gray-800 dark:text-gray-200">
                           🤝 Maestro ayudante
                         </span>
                       </label>
-                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                         <input
                           type="checkbox"
                           checked={quitarNinos}
                           onChange={(e) => setQuitarNinos(e.target.checked)}
                           className="w-4 h-4"
                         />
-                        <span className="text-sm text-gray-800">
+                        <span className="text-sm text-gray-800 dark:text-gray-200">
                           🧒 Maestro de niños
                         </span>
                       </label>
@@ -209,7 +208,7 @@ export default function BotonAnularAsignaciones() {
                   </div>
 
                   {mensaje && (
-                    <p className="text-sm text-center text-orange-600 font-medium">
+                    <p className="text-sm text-center text-orange-600 dark:text-orange-400 font-medium">
                       {mensaje}
                     </p>
                   )}
@@ -231,7 +230,7 @@ export default function BotonAnularAsignaciones() {
                     <button
                       onClick={cerrar}
                       disabled={cargando}
-                      className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50"
+                      className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
                     >
                       Cancelar
                     </button>
@@ -242,13 +241,15 @@ export default function BotonAnularAsignaciones() {
                   <div
                     className={`rounded-lg p-4 border ${
                       resultado.exito
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-red-50 border-red-200'
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700'
+                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'
                     }`}
                   >
                     <p
                       className={`text-sm font-medium ${
-                        resultado.exito ? 'text-green-800' : 'text-red-800'
+                        resultado.exito
+                          ? 'text-green-800 dark:text-green-300'
+                          : 'text-red-800 dark:text-red-300'
                       }`}
                     >
                       {resultado.exito ? '✅ ' : '❌ '}

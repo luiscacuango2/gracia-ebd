@@ -54,7 +54,11 @@ export default function BotonIAVersiculos({
       >
         {cargando ? '⏳ Generando...' : '✨ Sugerir con IA'}
       </button>
-      {mensaje && <p className="text-xs mt-2 text-gray-600">{mensaje}</p>}
+      {mensaje && (
+        <p className="text-xs mt-2 text-gray-600 dark:text-gray-400">
+          {mensaje}
+        </p>
+      )}
     </div>
   )
 }

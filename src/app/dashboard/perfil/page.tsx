@@ -16,8 +16,8 @@ export default async function PerfilPage() {
 
   if (!maestro) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <p className="text-red-700">
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
+        <p className="text-red-700 dark:text-red-300">
           No se encontró tu información de maestro. Contacta al administrador.
         </p>
       </div>
@@ -26,14 +26,14 @@ export default async function PerfilPage() {
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         Mi perfil
       </h1>
-      <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">
+      <p className="text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
         Actualiza tu información personal.
       </p>
 
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-2xl">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 max-w-2xl">
         <PerfilForm maestro={maestro} />
       </div>
     </div>

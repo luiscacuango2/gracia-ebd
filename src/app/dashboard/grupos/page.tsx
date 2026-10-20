@@ -38,10 +38,10 @@ export default async function GruposPage() {
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         Grupos de Maestros
       </h1>
-      <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">
+      <p className="text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
         Asigna qué maestros pueden servir en cada rol.
       </p>
 
@@ -51,7 +51,6 @@ export default async function GruposPage() {
             .filter((m) => m.grupo_id === grupo.id)
             .map((m) => mapaMaestros.get(m.maestro_id))
             .filter(Boolean)
-            // 🆕 Ordenar alfabéticamente por nombres
             .sort((a: any, b: any) =>
               `${a.nombres} ${a.apellidos}`.localeCompare(
                 `${b.nombres} ${b.apellidos}`,
@@ -69,18 +68,18 @@ export default async function GruposPage() {
           return (
             <div
               key={grupo.id}
-              className="bg-white rounded-lg shadow p-5 sm:p-6 border-t-4"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow p-5 sm:p-6 border-t-4"
               style={{ borderColor: '#E31E24' }}
             >
-              <h2 className="text-base sm:text-lg font-bold text-gray-800 capitalize mb-1">
+              <h2 className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 capitalize mb-1">
                 {emoji}{' '}
                 {grupo.nombre === 'ninos' ? 'Niños pequeños' : grupo.nombre}
               </h2>
-              <p className="text-xs text-gray-500 mb-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                 {grupo.descripcion}
               </p>
 
-              <p className="text-sm text-gray-700 mb-3">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
                 <strong>{integrantes.length}</strong> maestro
                 {integrantes.length === 1 ? '' : 's'}
               </p>
@@ -93,13 +92,13 @@ export default async function GruposPage() {
                       className="flex items-center gap-2 text-sm"
                     >
                       <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                      <span className="text-gray-700 truncate">
+                      <span className="text-gray-700 dark:text-gray-300 truncate">
                         {m.nombres} {m.apellidos}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-gray-400 italic">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 italic">
                     Sin maestros asignados
                   </p>
                 )}

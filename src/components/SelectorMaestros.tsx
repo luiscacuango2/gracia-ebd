@@ -45,14 +45,14 @@ export default function SelectorMaestros({
   const opcionesNinos = filtrar(maestrosNinos, 'ninos')
 
   return (
-    <div className="space-y-4 border-t pt-4 mt-4">
+    <div className="space-y-4 border-t dark:border-gray-700 pt-4 mt-4">
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-1">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
           👥 Asignación de maestros para esta semana
         </h3>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
           Solo aparecen los maestros asignados a cada grupo. Gestiona los grupos en{" "}
-          <a href="/dashboard/grupos" className="text-red-600 hover:underline">
+          <a href="/dashboard/grupos" className="text-red-600 dark:text-red-400 hover:underline">
             Grupos de maestros
           </a>
           .
@@ -60,11 +60,11 @@ export default function SelectorMaestros({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           🧑‍🏫 Maestro principal
         </label>
         {opcionesPrincipales.length === 0 ? (
-          <p className="text-xs text-gray-400 italic bg-gray-50 px-3 py-2 rounded border border-gray-200">
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border border-gray-200 dark:border-gray-600">
             No hay maestros asignados al grupo "Principales".
             {principalId && ' (El seleccionado actualmente no está en el grupo)'}
           </p>
@@ -72,7 +72,7 @@ export default function SelectorMaestros({
           <select
             value={principalId}
             onChange={(e) => onChange('principal', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value="">— Sin asignar —</option>
             {opcionesPrincipales.map((m) => (
@@ -85,11 +85,11 @@ export default function SelectorMaestros({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           🤝 Maestro ayudante
         </label>
         {opcionesAyudantes.length === 0 ? (
-          <p className="text-xs text-gray-400 italic bg-gray-50 px-3 py-2 rounded border border-gray-200">
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border border-gray-200 dark:border-gray-600">
             No hay maestros asignados al grupo "Ayudantes".
             {ayudanteId && ' (El seleccionado actualmente no está en el grupo)'}
           </p>
@@ -97,7 +97,7 @@ export default function SelectorMaestros({
           <select
             value={ayudanteId}
             onChange={(e) => onChange('ayudante', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value="">— Sin asignar —</option>
             {opcionesAyudantes.map((m) => (
@@ -110,11 +110,11 @@ export default function SelectorMaestros({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           🧒 Maestro de niños
         </label>
         {opcionesNinos.length === 0 ? (
-          <p className="text-xs text-gray-400 italic bg-gray-50 px-3 py-2 rounded border border-gray-200">
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border border-gray-200 dark:border-gray-600">
             No hay maestros asignados al grupo "Niños pequeños".
             {ninosId && ' (El seleccionado actualmente no está en el grupo)'}
           </p>
@@ -122,7 +122,7 @@ export default function SelectorMaestros({
           <select
             value={ninosId}
             onChange={(e) => onChange('ninos', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value="">— Sin asignar —</option>
             {opcionesNinos.map((m) => (

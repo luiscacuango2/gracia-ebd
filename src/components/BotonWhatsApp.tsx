@@ -9,7 +9,7 @@ type Semana = {
   pasaje_biblico: string | null
   versiculo_memorizar: string | null
   manualidad: string | null
-actividad_ninos: string | null //
+  actividad_ninos: string | null
 }
 
 type Maestro = {
@@ -73,14 +73,13 @@ export default function BotonWhatsApp({
     if (semana.manualidad) {
       lineas.push('*Manualidad:*')
       lineas.push(semana.manualidad)
-     lineas.push('')
+      lineas.push('')
     }
-
     if (semana.actividad_ninos) {
-  lineas.push('*Actividad para niños:*')
-  lineas.push(semana.actividad_ninos)
-}
-return lineas.join('\n').trim()
+      lineas.push('*Actividad para niños:*')
+      lineas.push(semana.actividad_ninos)
+    }
+    return lineas.join('\n').trim()
   }
 
   const mensajeConfirmacion = () => {
@@ -146,7 +145,6 @@ return lineas.join('\n').trim()
     window.open(url, '_blank')
   }
 
-
   const tiposDisponibles = esAdmin
     ? (['ninos', 'maestros', 'confirmacion'] as const)
     : (['ninos', 'maestros'] as const)
@@ -157,9 +155,9 @@ return lineas.join('\n').trim()
         {tiposDisponibles.map((tipo) => {
           const m = mensajes[tipo]
           return (
-            <div key={tipo} className="p-2 bg-gray-50 rounded-lg">
+            <div key={tipo} className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-medium text-gray-600 flex-1 min-w-0">
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex-1 min-w-0">
                   {m.titulo}
                 </span>
                 <div className="flex gap-1 flex-shrink-0">
@@ -174,7 +172,7 @@ return lineas.join('\n').trim()
                     onClick={() =>
                       setPreviewActivo(previewActivo === tipo ? null : tipo)
                     }
-                    className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-medium hover:bg-white bg-white"
+                    className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-white dark:hover:bg-gray-600 bg-white dark:bg-gray-800"
                   >
                     {previewActivo === tipo ? '✕' : '👁'}
                   </button>
@@ -186,11 +184,11 @@ return lineas.join('\n').trim()
       </div>
 
       {previewActivo && (
-        <div className="mt-3 p-4 bg-white border border-gray-200 rounded-lg overflow-x-auto">
-          <p className="text-xs text-gray-500 mb-2 font-medium uppercase">
+        <div className="mt-3 p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg overflow-x-auto">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium uppercase">
             Vista previa:
           </p>
-          <pre className="text-xs sm:text-sm text-gray-800 whitespace-pre-wrap font-sans">
+          <pre className="text-xs sm:text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans">
             {mensajes[previewActivo as keyof typeof mensajes].texto}
           </pre>
         </div>

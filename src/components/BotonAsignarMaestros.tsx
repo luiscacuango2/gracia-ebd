@@ -47,8 +47,8 @@ export default function BotonAsignarMaestros({
         onClick={handleAbrir}
         className={`inline-block px-4 py-2 rounded-lg border text-sm font-medium ${
           tieneAsignacion
-            ? 'border-gray-400 text-gray-700 hover:bg-gray-50'
-            : 'border-red-600 text-red-600 hover:bg-red-50'
+            ? 'border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+            : 'border-red-600 dark:border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
         }`}
       >
         {tieneAsignacion ? '✏️ Modificar maestros' : '👥 Asignar maestros'}

@@ -50,11 +50,6 @@ export default async function EditarSemanaPage({
   const hoy = new Date().toISOString().split('T')[0]
   const esFutura = semana.fecha >= hoy
 
-  // Reglas de edición:
-  // - Admin: puede editar siempre
-  // - Maestro principal: solo puede editar si la clase es FUTURA
-  // - Maestro de niños: solo puede editar la ACTIVIDAD (lo maneja el form)
-  // - Otros: solo lectura
   const puedeEditar = esAdmin || (esPrincipal && esFutura)
 
   const razonNoEditar = !puedeEditar
@@ -74,7 +69,7 @@ export default async function EditarSemanaPage({
         <div className="mb-6">
           <Link
             href="/dashboard/semanas"
-            className="text-red-600 hover:underline text-sm"
+            className="text-red-600 dark:text-red-400 hover:underline text-sm"
           >
             ← Volver a semanas
           </Link>
@@ -83,15 +78,15 @@ export default async function EditarSemanaPage({
         <div
           className={`rounded-lg p-4 mb-6 border ${
             esPrincipal && !esFutura
-              ? 'bg-yellow-50 border-yellow-200'
-              : 'bg-blue-50 border-blue-200'
+              ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700'
+              : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
           }`}
         >
           <p
             className={`text-sm ${
               esPrincipal && !esFutura
-                ? 'text-yellow-800'
-                : 'text-blue-800'
+                ? 'text-yellow-800 dark:text-yellow-300'
+                : 'text-blue-800 dark:text-blue-300'
             }`}
           >
             {esPrincipal && !esFutura ? '📜 ' : 'ℹ️ '}
@@ -102,10 +97,10 @@ export default async function EditarSemanaPage({
         {/* Encabezado */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-6">
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 break-words">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 break-words">
               {semana.tema}
             </h1>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               {new Date(semana.fecha + 'T12:00:00').toLocaleDateString('es-ES', {
                 weekday: 'long',
                 year: 'numeric',
@@ -118,24 +113,24 @@ export default async function EditarSemanaPage({
             <span
               className={`text-xs px-3 py-1 rounded-full font-medium ${
                 esFutura
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-gray-200 text-gray-700'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
               }`}
             >
               {esFutura ? '📅 Clase futura' : '✅ Clase dictada'}
             </span>
             {esPrincipal && (
-              <span className="text-xs px-3 py-1 rounded-full font-medium bg-red-100 text-red-800">
+              <span className="text-xs px-3 py-1 rounded-full font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
                 🧑‍🏫 Eres principal
               </span>
             )}
             {esAyudante && (
-              <span className="text-xs px-3 py-1 rounded-full font-medium bg-blue-100 text-blue-800">
+              <span className="text-xs px-3 py-1 rounded-full font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                 🤝 Eres ayudante
               </span>
             )}
             {esNinos && (
-              <span className="text-xs px-3 py-1 rounded-full font-medium bg-yellow-100 text-yellow-800">
+              <span className="text-xs px-3 py-1 rounded-full font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
                 🧒 Maestro de niños
               </span>
             )}
@@ -143,54 +138,54 @@ export default async function EditarSemanaPage({
         </div>
 
         {/* Datos de la clase */}
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4 max-w-3xl">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 space-y-4 max-w-3xl">
           <div>
-            <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+            <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
               Versículos de estudio
             </p>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">
               {semana.pasaje_biblico || '—'}
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+            <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
               Versículo para memorizar
             </p>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">
               {semana.versiculo_memorizar || '—'}
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+            <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
               Manualidad
             </p>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">
               {semana.manualidad || '—'}
             </p>
           </div>
 
-          {/* 🆕 Actividad para niños pequeños (SOLO LECTURA) */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
+          {/* Actividad para niños pequeños (SOLO LECTURA) */}
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
+            <p className="text-xs uppercase text-yellow-700 dark:text-yellow-400 font-medium mb-1">
               🧒 Actividad para niños pequeños
             </p>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">
               {semana.actividad_ninos || (
                 <span className="text-gray-400 italic">Sin registrar</span>
               )}
             </p>
           </div>
 
-          <div className="pt-4 border-t">
-            <p className="text-xs uppercase text-gray-400 font-medium mb-3">
+          <div className="pt-4 border-t dark:border-gray-700">
+            <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-3">
               Maestros asignados
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
               <div className="flex items-center gap-2">
                 <span>🧑‍🏫</span>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Principal</p>
-                  <p className="font-medium text-gray-800 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Principal</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-200 truncate">
                     {asignacion?.maestro_principal_id
                       ? mapaMaestros.get(asignacion.maestro_principal_id) || '—'
                       : 'Sin asignar'}
@@ -200,8 +195,8 @@ export default async function EditarSemanaPage({
               <div className="flex items-center gap-2">
                 <span>🤝</span>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Ayudante</p>
-                  <p className="font-medium text-gray-800 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Ayudante</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-200 truncate">
                     {asignacion?.maestro_ayudante_id
                       ? mapaMaestros.get(asignacion.maestro_ayudante_id) || '—'
                       : 'Sin asignar'}
@@ -211,8 +206,8 @@ export default async function EditarSemanaPage({
               <div className="flex items-center gap-2">
                 <span>🧒</span>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Niños</p>
-                  <p className="font-medium text-gray-800 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Niños</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-200 truncate">
                     {asignacion?.maestro_ninos_id
                       ? mapaMaestros.get(asignacion.maestro_ninos_id) || '—'
                       : 'Sin asignar'}
@@ -232,22 +227,22 @@ export default async function EditarSemanaPage({
       <div className="mb-6">
         <Link
           href="/dashboard/semanas"
-          className="text-red-600 hover:underline text-sm"
+          className="text-red-600 dark:text-red-400 hover:underline text-sm"
         >
           ← Volver a semanas
         </Link>
       </div>
 
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         Editar Semana
       </h1>
-      <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">
+      <p className="text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
         {esAdmin
           ? 'Como admin puedes editar los datos de la clase.'
           : 'Como maestro principal de esta semana, puedes editar los datos de la clase.'}
       </p>
 
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-3xl">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 max-w-3xl">
         <SemanaForm semana={semana} />
       </div>
     </div>

@@ -67,8 +67,8 @@ export default async function SemanasPage({
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <p className="text-red-700">Error al cargar semanas: {error.message}</p>
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
+        <p className="text-red-700 dark:text-red-300">Error al cargar semanas: {error.message}</p>
       </div>
     )
   }
@@ -83,17 +83,17 @@ export default async function SemanasPage({
   return (
     <div>
       {/* Header STICKY compacto */}
-      <div className="sticky top-0 z-20 bg-gray-50 -mx-4 md:-mx-8 px-4 md:px-8 pt-3 md:pt-4 pb-3 mb-2 border-b border-gray-200">
+      <div className="sticky top-0 z-20 bg-gray-50 dark:bg-gray-900 -mx-4 md:-mx-8 px-4 md:px-8 pt-3 md:pt-4 pb-3 mb-2 border-b border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-center gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-800">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
               Semanas
             </h1>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               ({semanas?.length ?? 0})
             </span>
             {esAdmin && (
-              <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
+              <span className="text-xs bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 px-2 py-0.5 rounded">
                 Admin
               </span>
             )}
@@ -112,7 +112,7 @@ export default async function SemanasPage({
               </>
             )}
             {!esAdmin && (
-              <div className="text-xs text-gray-500 italic px-2 py-1 bg-white rounded-lg border border-gray-200">
+              <div className="text-xs text-gray-500 dark:text-gray-400 italic px-2 py-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 👁 Solo lectura
               </div>
             )}
@@ -126,7 +126,7 @@ export default async function SemanasPage({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'todas'
                 ? 'text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
             style={filtro === 'todas' ? { backgroundColor: '#E31E24' } : {}}
           >
@@ -137,7 +137,7 @@ export default async function SemanasPage({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'futuras'
                 ? 'text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
             style={filtro === 'futuras' ? { backgroundColor: '#E31E24' } : {}}
           >
@@ -148,7 +148,7 @@ export default async function SemanasPage({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               filtro === 'pasadas'
                 ? 'text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
             style={filtro === 'pasadas' ? { backgroundColor: '#E31E24' } : {}}
           >
@@ -161,7 +161,7 @@ export default async function SemanasPage({
         <div className="space-y-6">
           {mostrarFuturas && proximas.length > 0 && (
             <div>
-              <h2 className="text-base font-semibold text-gray-700 mb-2">
+              <h2 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 📅 Próximas semanas
               </h2>
               <div className="grid gap-4">
@@ -184,7 +184,7 @@ export default async function SemanasPage({
 
           {mostrarPasadas && pasadas.length > 0 && (
             <div>
-              <h2 className="text-base font-semibold text-gray-700 mb-2">
+              <h2 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 📖 Semanas pasadas
               </h2>
               <div className="grid gap-4">
@@ -207,8 +207,8 @@ export default async function SemanasPage({
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <p className="text-gray-500 mb-4">No hay semanas registradas aún.</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">No hay semanas registradas aún.</p>
           {esAdmin && (
             <Link
               href="/dashboard/semanas/nueva"
@@ -272,7 +272,7 @@ function SemanaCard({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 ${
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 border-l-4 ${
         pasada ? 'opacity-90' : ''
       }`}
       style={{ borderColor: '#E31E24' }}
@@ -280,25 +280,25 @@ function SemanaCard({
       <div className="flex justify-between items-start mb-3 gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 mb-1">
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-gray-500 dark:text-gray-400 font-medium">
               {fechaFormateada}
             </p>
             <span
               className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                 esFutura
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-gray-200 text-gray-600'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
               }`}
             >
               {esFutura ? 'Futura' : 'Dictada'}
             </span>
             {esPrincipal && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-red-100 text-red-800">
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
                 🧑‍🏫 Eres principal
               </span>
             )}
           </div>
-          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mt-1 break-words">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 mt-1 break-words">
             {semana.tema}
           </h3>
         </div>
@@ -306,8 +306,8 @@ function SemanaCard({
           href={`/dashboard/semanas/${semana.id}`}
           className={`font-medium text-sm whitespace-nowrap ${
             puedeEditar
-              ? 'text-red-600 hover:underline'
-              : 'text-gray-500 hover:underline'
+              ? 'text-red-600 dark:text-red-400 hover:underline'
+              : 'text-gray-500 dark:text-gray-400 hover:underline'
           }`}
         >
           {puedeEditar ? '✏️ Editar' : '👁 Ver'}
@@ -316,31 +316,31 @@ function SemanaCard({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm mt-4">
         <div>
-          <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+          <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
             Versículos de estudio
           </p>
-          <p className="text-gray-700">{semana.pasaje_biblico || '—'}</p>
+          <p className="text-gray-700 dark:text-gray-300">{semana.pasaje_biblico || '—'}</p>
         </div>
         <div>
-          <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+          <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
             Versículo para memorizar
           </p>
-          <p className="text-gray-700">{semana.versiculo_memorizar || '—'}</p>
+          <p className="text-gray-700 dark:text-gray-300">{semana.versiculo_memorizar || '—'}</p>
         </div>
         <div>
-          <p className="text-xs uppercase text-gray-400 font-medium mb-1">
+          <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-1">
             Manualidad
           </p>
-          <p className="text-gray-700">{semana.manualidad || '—'}</p>
+          <p className="text-gray-700 dark:text-gray-300">{semana.manualidad || '—'}</p>
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-          <p className="text-xs uppercase text-yellow-700 font-medium mb-1">
+      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
+          <p className="text-xs uppercase text-yellow-700 dark:text-yellow-400 font-medium mb-1">
             🧒 Actividad para niños pequeños
           </p>
-          <p className="text-gray-700 text-sm">
+          <p className="text-gray-700 dark:text-gray-300 text-sm">
             {semana.actividad_ninos || (
               <span className="text-gray-400 italic text-xs">Sin registrar</span>
             )}
@@ -348,14 +348,14 @@ function SemanaCard({
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
         {tieneAsignaciones ? (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
             <div className="flex items-start gap-2">
               <span className="text-base">🧑‍🏫</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">Principal</p>
-                <p className="text-gray-700 font-medium truncate">
+                <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium">Principal</p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium truncate">
                   {principal ? `${principal.nombres} ${principal.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
@@ -363,8 +363,8 @@ function SemanaCard({
             <div className="flex items-start gap-2">
               <span className="text-base">🤝</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">Ayudante</p>
-                <p className="text-gray-700 font-medium truncate">
+                <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium">Ayudante</p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium truncate">
                   {ayudante ? `${ayudante.nombres} ${ayudante.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
@@ -372,20 +372,20 @@ function SemanaCard({
             <div className="flex items-start gap-2">
               <span className="text-base">🧒</span>
               <div className="min-w-0">
-                <p className="text-xs uppercase text-gray-400 font-medium">Niños</p>
-                <p className="text-gray-700 font-medium truncate">
+                <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium">Niños</p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium truncate">
                   {ninos ? `${ninos.nombres} ${ninos.apellidos}` : 'Sin asignar'}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-gray-400 italic">Sin maestros asignados aún</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic">Sin maestros asignados aún</p>
         )}
       </div>
 
       {esAdmin && (
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
           <BotonAsignarMaestros
             semanaId={semana.id}
             semanaTema={semana.tema}
@@ -403,7 +403,7 @@ function SemanaCard({
       )}
 
       {esAdmin && (
-        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-2">
           <BotonEnviarMaestro
             semanaId={semana.id}
             semanaTema={semana.tema}
@@ -423,8 +423,8 @@ function SemanaCard({
         </div>
       )}
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <p className="text-xs uppercase text-gray-400 font-medium mb-2">
+      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <p className="text-xs uppercase text-gray-400 dark:text-gray-500 font-medium mb-2">
           Mensajes para compartir
         </p>
         <BotonWhatsApp

@@ -97,7 +97,7 @@ export default function BotonEnviarMaestro({
     <>
       <button
         onClick={handleAbrir}
-        className="inline-block px-4 py-2 rounded-lg border border-blue-600 text-blue-600 text-sm font-medium hover:bg-blue-50"
+        className="inline-block px-4 py-2 rounded-lg border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 text-sm font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20"
       >
         📤 Enviar enlaces a maestros
       </button>
@@ -108,25 +108,25 @@ export default function BotonEnviarMaestro({
           onClick={cerrar}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Cabecera mejorada */}
-            <div className="p-4 border-b flex justify-between items-start">
+            {/* Cabecera */}
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-start">
               <div className="min-w-0 flex-1">
-                <h2 className="text-lg font-bold text-gray-800 mb-1">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">
                   📤 Enviar enlaces a maestros
                 </h2>
-                <p className="text-sm sm:text-base text-gray-600 capitalize font-medium">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 capitalize font-medium">
                   {fechaFormateada}
                 </p>
-                <p className="text-base sm:text-lg font-semibold text-gray-800 mt-0.5 truncate">
+                <p className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 mt-0.5 truncate">
                   {semanaTema}
                 </p>
               </div>
               <button
                 onClick={cerrar}
-                className="text-gray-400 hover:text-gray-600 text-2xl flex-shrink-0 ml-2"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl flex-shrink-0 ml-2"
               >
                 ×
               </button>
@@ -135,32 +135,32 @@ export default function BotonEnviarMaestro({
             <div className="p-6 space-y-5">
               {cargando && !token ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500 text-sm">Generando enlaces...</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Generando enlaces...</p>
                 </div>
               ) : token ? (
                 <>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <p className="text-xs text-blue-800">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                    <p className="text-xs text-blue-800 dark:text-blue-300">
                       ℹ️ Cada maestro tiene su propio enlace. No requiere iniciar
                       sesión y solo puede editar lo que le corresponde.
                     </p>
                   </div>
 
                   {/* Enlace para Maestro Principal */}
-                  <div className="border border-red-200 rounded-lg p-4 bg-red-50/30">
+                  <div className="border border-red-200 dark:border-red-700 rounded-lg p-4 bg-red-50/30 dark:bg-red-900/10">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">🧑‍🏫</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-800">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                           Enlace para Maestro Principal
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           Puede editar tema, versículos, manualidad y actividad
                           de niños.
                         </p>
                       </div>
                       {!tienePrincipal && (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-2 py-0.5 rounded">
                           Sin asignar
                         </span>
                       )}
@@ -170,7 +170,7 @@ export default function BotonEnviarMaestro({
                         type="text"
                         value={enlacePrincipal}
                         readOnly
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-xs font-mono"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs font-mono"
                       />
                       <div className="flex gap-1">
                         <button
@@ -180,7 +180,7 @@ export default function BotonEnviarMaestro({
                           className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap ${
                             copiado === 'principal'
                               ? 'bg-green-600 text-white'
-                              : 'bg-gray-800 text-white hover:bg-gray-700'
+                              : 'bg-gray-800 dark:bg-gray-600 text-white hover:bg-gray-700 dark:hover:bg-gray-500'
                           }`}
                         >
                           {copiado === 'principal' ? '✅' : '📋 Copiar'}
@@ -199,19 +199,19 @@ export default function BotonEnviarMaestro({
                   </div>
 
                   {/* Enlace para Maestro de Niños */}
-                  <div className="border border-yellow-200 rounded-lg p-4 bg-yellow-50/30">
+                  <div className="border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 bg-yellow-50/30 dark:bg-yellow-900/10">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">🧒</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-800">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                           Enlace para Maestro de Niños
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           Solo puede registrar la <strong>actividad para niños pequeños</strong>.
                         </p>
                       </div>
                       {!tieneNinos && (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-2 py-0.5 rounded">
                           Sin asignar
                         </span>
                       )}
@@ -221,7 +221,7 @@ export default function BotonEnviarMaestro({
                         type="text"
                         value={enlaceNinos}
                         readOnly
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-xs font-mono"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs font-mono"
                       />
                       <div className="flex gap-1">
                         <button
@@ -229,7 +229,7 @@ export default function BotonEnviarMaestro({
                           className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap ${
                             copiado === 'ninos'
                               ? 'bg-green-600 text-white'
-                              : 'bg-gray-800 text-white hover:bg-gray-700'
+                              : 'bg-gray-800 dark:bg-gray-600 text-white hover:bg-gray-700 dark:hover:bg-gray-500'
                           }`}
                         >
                           {copiado === 'ninos' ? '✅' : '📋 Copiar'}
@@ -251,14 +251,14 @@ export default function BotonEnviarMaestro({
                     <button
                       onClick={handleRegenerar}
                       disabled={cargando}
-                      className="w-full px-4 py-2 rounded-lg border border-red-600 text-red-600 text-sm font-medium hover:bg-red-50 disabled:opacity-50"
+                      className="w-full px-4 py-2 rounded-lg border border-red-600 dark:border-red-400 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
                     >
                       🔄 Regenerar enlaces (los anteriores dejarán de funcionar)
                     </button>
                   )}
 
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-xs text-yellow-800">
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
+                    <p className="text-xs text-yellow-800 dark:text-yellow-300">
                       ⚠️ <strong>Advertencia:</strong> Cualquiera con estos
                       enlaces puede editar. Compártelos solo con los maestros
                       asignados.
@@ -268,12 +268,12 @@ export default function BotonEnviarMaestro({
               ) : null}
 
               {mensaje && (
-                <p className="text-sm text-center text-gray-700">{mensaje}</p>
+                <p className="text-sm text-center text-gray-700 dark:text-gray-300">{mensaje}</p>
               )}
 
               <button
                 onClick={cerrar}
-                className="w-full px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
+                className="w-full px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cerrar
               </button>

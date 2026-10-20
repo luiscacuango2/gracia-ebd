@@ -77,7 +77,7 @@ export default function FormEdicionPublica({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           Tema *
         </label>
         <input
@@ -87,12 +87,12 @@ export default function FormEdicionPublica({
           onChange={handleChange}
           required
           placeholder="Ej: El servicio"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           Versículos de estudio
         </label>
         <textarea
@@ -101,15 +101,15 @@ export default function FormEdicionPublica({
           onChange={handleChange}
           rows={2}
           placeholder="Ej: Mateo 20:26-28, Juan 12:26, Mateo 23:11"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
-        <p className="text-xs text-gray-500 italic mt-2">
+        <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-2">
           💡 Los versículos son referenciales y puedes modificarlos cuando desees
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           Versículo para memorizar
         </label>
         <textarea
@@ -118,12 +118,12 @@ export default function FormEdicionPublica({
           onChange={handleChange}
           rows={3}
           placeholder="Ej: El más importante entre ustedes será siervo de los demás. Mateo 23:11"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           Manualidad
         </label>
         <textarea
@@ -132,16 +132,16 @@ export default function FormEdicionPublica({
           onChange={handleChange}
           rows={3}
           placeholder="Ej: Sombreros de cafetería, y servir en el bar de la iglesia."
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
       </div>
 
       {/* Actividad de niños */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <label className="block text-sm font-medium text-gray-800 mb-1">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4">
+        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
           🧒 Actividad para niños pequeños
         </label>
-        <p className="text-xs text-gray-600 mb-3">
+        <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
           💡 Recomendación: que la actividad esté relacionada con el tema de la clase
           (ej: pintar imágenes, juegos, canciones, dinámicas).
         </p>
@@ -151,15 +151,15 @@ export default function FormEdicionPublica({
           onChange={handleChange}
           rows={3}
           placeholder="Ej: Pintar una imagen de Jesús sirviendo a los demás."
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
       </div>
 
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-        <p className="text-xs uppercase text-gray-500 font-medium mb-2">
+      <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-4">
+        <p className="text-xs uppercase text-gray-500 dark:text-gray-400 font-medium mb-2">
           Maestros asignados
         </p>
-        <div className="space-y-1 text-xs text-gray-700">
+        <div className="space-y-1 text-xs text-gray-700 dark:text-gray-300">
           <p>
             🧑‍🏫 <strong>Principal:</strong>{' '}
             {nombreMaestro(asignacion?.maestro_principal_id)}
@@ -179,8 +179,8 @@ export default function FormEdicionPublica({
         <div
           className={`p-4 rounded-xl text-sm text-center font-medium ${
             guardado
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
+              ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700'
+              : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700'
           }`}
         >
           {mensaje}
@@ -196,7 +196,7 @@ export default function FormEdicionPublica({
         {cargando ? 'Guardando...' : '💾 Guardar cambios'}
       </button>
 
-      <p className="text-xs text-center text-gray-400">
+      <p className="text-xs text-center text-gray-400 dark:text-gray-500">
         Los cambios se guardan directamente en el sistema.
       </p>
     </form>

@@ -48,7 +48,6 @@ export default function ModalAsignarMaestros({
   const [mensaje, setMensaje] = useState('')
   const [cargando, setCargando] = useState(false)
 
-  // Resetear cuando se abre/cierra
   useEffect(() => {
     if (abierto) {
       setAsignacion({ ...asignacionActual })
@@ -67,7 +66,6 @@ export default function ModalAsignarMaestros({
   const hayAlguienAsignado =
     asignacion.principal || asignacion.ayudante || asignacion.ninos
 
-  // Validar duplicados: mismo maestro en 2 roles
   const hayDuplicado = (() => {
     const ids = [asignacion.principal, asignacion.ayudante, asignacion.ninos].filter(Boolean)
     return new Set(ids).size !== ids.length
@@ -96,7 +94,6 @@ export default function ModalAsignarMaestros({
       return
     }
 
-    // En modo modificar, el motivo es OBLIGATORIO si hay cambios
     if (esModificar && hayCambios && !comentario.trim()) {
       setMensaje('⚠️ Debes indicar el motivo del cambio')
       return
@@ -125,7 +122,6 @@ export default function ModalAsignarMaestros({
       return
     }
 
-    // Registrar rotaciones (solo en modo modificar)
     if (esModificar) {
       const cambios: Array<{
         grupo: 'principales' | 'ayudantes' | 'ninos'
@@ -182,7 +178,6 @@ export default function ModalAsignarMaestros({
   const handleQuitarTodas = async () => {
     if (!confirm('¿Estás seguro de quitar TODOS los maestros asignados a esta semana?')) return
 
-    // Si es modo modificar y hay algo que quitar, pedir motivo
     if (esModificar && !comentario.trim()) {
       setMensaje('⚠️ Debes indicar el motivo antes de quitar los maestros')
       return
@@ -208,7 +203,6 @@ export default function ModalAsignarMaestros({
       return
     }
 
-    // Registrar rotaciones
     if (esModificar) {
       const cambios: Array<{
         grupo: 'principales' | 'ayudantes' | 'ninos'
@@ -266,7 +260,6 @@ export default function ModalAsignarMaestros({
     }
   )
 
-  // Filtrar opciones excluyendo las ya seleccionadas + ordenar alfabéticamente
   const filtrarYOrdenar = (lista: Maestro[], excluir: (string | null)[]) =>
     lista
       .filter((m) => !excluir.includes(m.id))
@@ -289,34 +282,35 @@ export default function ModalAsignarMaestros({
     asignacion.principal,
     asignacion.ayudante,
   ])
+
   return (
     <div
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={handleCerrar}
     >
       <div
-        className="bg-white rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera */}
         <div
-          className="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10"
+          className="p-4 border-b dark:border-gray-700 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-800 z-10"
           style={{ borderColor: '#E31E24' }}
         >
           <div className="min-w-0">
-            <h2 className="text-lg font-bold text-gray-800">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
               {esModificar ? '✏️ Modificar asignación' : '👥 Asignar maestros'}
             </h2>
-            <p className="text-xs text-gray-500 mt-1 capitalize truncate">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 capitalize truncate">
               {fechaFormateada}
             </p>
-            <p className="text-sm font-semibold text-gray-700 truncate">
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate">
               {semanaTema}
             </p>
           </div>
           <button
             onClick={handleCerrar}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none flex-shrink-0"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none flex-shrink-0"
             aria-label="Cerrar"
           >
             ×
@@ -326,15 +320,15 @@ export default function ModalAsignarMaestros({
         {/* Formulario */}
         <form onSubmit={handleGuardar} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               🧑‍🏫 Maestro principal
             </label>
             {maestrosPrincipales.length === 0 ? (
-              <p className="text-xs text-gray-500 italic bg-gray-50 px-3 py-2 rounded border">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border dark:border-gray-600">
                 No hay maestros en el grupo "Principales".{' '}
                 <a
                   href="/dashboard/grupos"
-                  className="text-red-600 hover:underline"
+                  className="text-red-600 dark:text-red-400 hover:underline"
                 >
                   Gestionar grupos
                 </a>
@@ -345,7 +339,7 @@ export default function ModalAsignarMaestros({
                 onChange={(e) =>
                   setAsignacion({ ...asignacion, principal: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">— Sin asignar —</option>
                 {opcionesPrincipales.map((m) => (
@@ -358,15 +352,15 @@ export default function ModalAsignarMaestros({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               🤝 Maestro ayudante
             </label>
             {maestrosAyudantes.length === 0 ? (
-              <p className="text-xs text-gray-500 italic bg-gray-50 px-3 py-2 rounded border">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border dark:border-gray-600">
                 No hay maestros en el grupo "Ayudantes".{' '}
                 <a
                   href="/dashboard/grupos"
-                  className="text-red-600 hover:underline"
+                  className="text-red-600 dark:text-red-400 hover:underline"
                 >
                   Gestionar grupos
                 </a>
@@ -377,7 +371,7 @@ export default function ModalAsignarMaestros({
                 onChange={(e) =>
                   setAsignacion({ ...asignacion, ayudante: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">— Sin asignar —</option>
                 {opcionesAyudantes.map((m) => (
@@ -390,15 +384,15 @@ export default function ModalAsignarMaestros({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               🧒 Maestro de niños
             </label>
             {maestrosNinos.length === 0 ? (
-              <p className="text-xs text-gray-500 italic bg-gray-50 px-3 py-2 rounded border">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded border dark:border-gray-600">
                 No hay maestros en el grupo "Niños pequeños".{' '}
                 <a
                   href="/dashboard/grupos"
-                  className="text-red-600 hover:underline"
+                  className="text-red-600 dark:text-red-400 hover:underline"
                 >
                   Gestionar grupos
                 </a>
@@ -409,7 +403,7 @@ export default function ModalAsignarMaestros({
                 onChange={(e) =>
                   setAsignacion({ ...asignacion, ninos: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">— Sin asignar —</option>
                 {opcionesNinos.map((m) => (
@@ -421,13 +415,12 @@ export default function ModalAsignarMaestros({
             )}
           </div>
 
-          {/* Advertencia de duplicado */}
           {hayDuplicado && (
-            <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
-              <p className="text-sm text-red-800 font-medium mb-1">
+            <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg p-4">
+              <p className="text-sm text-red-800 dark:text-red-300 font-medium mb-1">
                 ⚠️ Maestro duplicado
               </p>
-              <p className="text-xs text-red-700">
+              <p className="text-xs text-red-700 dark:text-red-400">
                 <strong>{nombreDuplicado}</strong> ya está asignado en otro
                 rol. Un maestro no puede ocupar dos funciones en la misma
                 semana.
@@ -435,34 +428,33 @@ export default function ModalAsignarMaestros({
             </div>
           )}
 
-          {/* Motivo (solo en modo modificar) */}
           {esModificar && (
             <div
               className={`rounded-lg p-4 border ${
                 hayCambios
-                  ? 'bg-yellow-50 border-yellow-300'
-                  : 'bg-gray-50 border-gray-200'
+                  ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-700'
+                  : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
               }`}
             >
-              <label className="block text-sm font-medium mb-2 text-gray-800">
+              <label className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-200">
                 📝 Motivo del cambio{' '}
-                {hayCambios ? <span className="text-red-600">(obligatorio)</span> : '(opcional)'}
+                {hayCambios ? <span className="text-red-600 dark:text-red-400">(obligatorio)</span> : '(opcional)'}
               </label>
               <textarea
                 value={comentario}
                 onChange={(e) => setComentario(e.target.value)}
                 rows={3}
                 placeholder="Ej: El maestro se enfermó y no podrá asistir. Se pidió a X que lo reemplace."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               {hayCambios && !comentario.trim() && (
-                <p className="text-xs text-yellow-700 mt-1">
+                <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
                   ⚠️ Como cambiaste una asignación, es necesario indicar el
                   motivo.
                 </p>
               )}
               {!hayCambios && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Puedes dejar una nota aunque no haya cambios (quedará registrada en el historial).
                 </p>
               )}
@@ -470,12 +462,11 @@ export default function ModalAsignarMaestros({
           )}
 
           {mensaje && (
-            <p className="text-sm text-center text-red-600 font-medium">
+            <p className="text-sm text-center text-red-600 dark:text-red-400 font-medium">
               {mensaje}
             </p>
           )}
 
-          {/* Botones */}
           <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <button
               type="submit"
@@ -499,7 +490,7 @@ export default function ModalAsignarMaestros({
                 type="button"
                 onClick={handleQuitarTodas}
                 disabled={cargando}
-                className="px-6 py-2 rounded-lg border-2 border-red-600 text-red-600 font-medium hover:bg-red-50 disabled:opacity-50 whitespace-nowrap"
+                className="px-6 py-2 rounded-lg border-2 border-red-600 dark:border-red-400 text-red-600 dark:text-red-400 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 whitespace-nowrap"
               >
                 🗑️ Quitar todos
               </button>
@@ -509,7 +500,7 @@ export default function ModalAsignarMaestros({
               type="button"
               onClick={handleCerrar}
               disabled={cargando}
-              className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50"
+              className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
             >
               Cancelar
             </button>

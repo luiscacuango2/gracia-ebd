@@ -93,7 +93,6 @@ export default function RotacionCliente({
     gruposInfo.ayudantes.length +
     gruposInfo.ninos.length
 
-  // 🆕 Obtener el total según el periodo seleccionado
   const getTotalPorPeriodo = (m: MaestroGrupo) => {
     if (periodoConteo === 'pasadas') return m.totalPasadas
     if (periodoConteo === 'futuras') return m.totalFuturas
@@ -124,14 +123,14 @@ export default function RotacionCliente({
   if (totalGrupos === 0) {
     return (
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
           🎲 Rotación automática
         </h1>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mt-6">
-          <p className="text-yellow-800 font-medium mb-2">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 mt-6">
+          <p className="text-yellow-800 dark:text-yellow-300 font-medium mb-2">
             ⚠️ No hay maestros asignados a ningún grupo
           </p>
-          <p className="text-sm text-yellow-700 mb-4">
+          <p className="text-sm text-yellow-700 dark:text-yellow-400 mb-4">
             Para usar la rotación automática, primero debes asignar maestros a
             los grupos (Principales, Ayudantes, Niños pequeños).
           </p>
@@ -173,7 +172,7 @@ export default function RotacionCliente({
       <div className="mb-6">
         <Link
           href="/dashboard/semanas"
-          className="text-red-600 hover:underline text-sm"
+          className="text-red-600 dark:text-red-400 hover:underline text-sm"
         >
           ← Volver a semanas
         </Link>
@@ -181,10 +180,10 @@ export default function RotacionCliente({
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
             🎲 Rotación automática
           </h1>
-          <p className="text-gray-600 mt-1 text-sm sm:text-base">
+          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base">
             Asigna maestros de forma equilibrada a las semanas futuras.
           </p>
         </div>
@@ -200,75 +199,75 @@ export default function RotacionCliente({
 
       {/* Estadísticas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
-          <p className="text-sm text-gray-500">Semanas futuras</p>
-          <p className="text-2xl font-bold text-gray-800 mt-1">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Semanas futuras</p>
+          <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
             {semanas.length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
-          <p className="text-sm text-gray-500">Faltan asignar</p>
-          <p className="text-2xl font-bold text-gray-800 mt-1">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Faltan asignar</p>
+          <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
             {sinAsignar.length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
-          <p className="text-sm text-gray-500">Completas</p>
-          <p className="text-2xl font-bold text-gray-800 mt-1">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4" style={{ borderColor: '#E31E24' }}>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Completas</p>
+          <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
             {completas.length}
           </p>
         </div>
       </div>
 
       {/* ===== MAESTROS DISPONIBLES POR GRUPO ===== */}
-      <div className="bg-white rounded-lg shadow p-5 sm:p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5 sm:p-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-800">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
               👥 Maestros disponibles por grupo
             </h2>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               El conteo refleja las <strong>clases dadas</strong> según el
               periodo seleccionado.
             </p>
           </div>
 
-{/* Filtro de periodo */}
-<div className="flex gap-1 flex-wrap">
-  <button
-    onClick={() => setPeriodoConteo('futuras')}
-    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-      periodoConteo === 'futuras'
-        ? 'text-white'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-    }`}
-    style={periodoConteo === 'futuras' ? { backgroundColor: '#E31E24' } : {}}
-  >
-    📅 Futuras
-  </button>
-  <button
-    onClick={() => setPeriodoConteo('pasadas')}
-    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-      periodoConteo === 'pasadas'
-        ? 'text-white'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-    }`}
-    style={periodoConteo === 'pasadas' ? { backgroundColor: '#E31E24' } : {}}
-  >
-    📖 Pasadas
-  </button>
-  <button
-    onClick={() => setPeriodoConteo('todas')}
-    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-      periodoConteo === 'todas'
-        ? 'text-white'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-    }`}
-    style={periodoConteo === 'todas' ? { backgroundColor: '#E31E24' } : {}}
-  >
-    📋 Todas
-  </button>
-</div>
+          {/* Filtro de periodo */}
+          <div className="flex gap-1 flex-wrap">
+            <button
+              onClick={() => setPeriodoConteo('futuras')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                periodoConteo === 'futuras'
+                  ? 'text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              style={periodoConteo === 'futuras' ? { backgroundColor: '#E31E24' } : {}}
+            >
+              📅 Futuras
+            </button>
+            <button
+              onClick={() => setPeriodoConteo('pasadas')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                periodoConteo === 'pasadas'
+                  ? 'text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              style={periodoConteo === 'pasadas' ? { backgroundColor: '#E31E24' } : {}}
+            >
+              📖 Pasadas
+            </button>
+            <button
+              onClick={() => setPeriodoConteo('todas')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                periodoConteo === 'todas'
+                  ? 'text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              style={periodoConteo === 'todas' ? { backgroundColor: '#E31E24' } : {}}
+            >
+              📋 Todas
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -304,12 +303,12 @@ export default function RotacionCliente({
 
       {/* Advertencias */}
       {sinTema.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-          <p className="text-sm text-yellow-800 font-medium mb-1">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 mb-6">
+          <p className="text-sm text-yellow-800 dark:text-yellow-300 font-medium mb-1">
             ⚠️ {sinTema.length} semana{sinTema.length === 1 ? '' : 's'} sin tema
             registrado
           </p>
-          <p className="text-xs text-yellow-700">
+          <p className="text-xs text-yellow-700 dark:text-yellow-400">
             El sistema asignará maestros igual, pero es recomendable registrar
             el tema antes.
           </p>
@@ -318,13 +317,13 @@ export default function RotacionCliente({
 
       {/* Listado de semanas */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
           Semanas futuras ({semanas.length})
         </h2>
 
         {semanas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <p className="text-gray-500 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
               No hay semanas futuras registradas.
             </p>
             <Link
@@ -346,12 +345,12 @@ export default function RotacionCliente({
             return (
               <div
                 key={s.id}
-                className="bg-white rounded-lg shadow p-4 border-l-4"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4"
                 style={{ borderColor: '#E31E24' }}
               >
                 <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs uppercase text-gray-500 font-medium">
+                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400 font-medium">
                       {fecha.toLocaleDateString('es-ES', {
                         weekday: 'long',
                         day: 'numeric',
@@ -363,7 +362,7 @@ export default function RotacionCliente({
                       className={`font-bold mt-1 break-words ${
                         sinTemaSemana
                           ? 'text-gray-400 italic'
-                          : 'text-gray-800'
+                          : 'text-gray-800 dark:text-gray-100'
                       }`}
                     >
                       {sinTemaSemana ? '(Sin tema registrado)' : s.tema}
@@ -371,17 +370,17 @@ export default function RotacionCliente({
                   </div>
                   <Link
                     href={`/dashboard/semanas/${s.id}`}
-                    className="text-red-600 hover:underline text-sm font-medium whitespace-nowrap"
+                    className="text-red-600 dark:text-red-400 hover:underline text-sm font-medium whitespace-nowrap"
                   >
                     Editar
                   </Link>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs mt-3 pt-3 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs mt-3 pt-3 border-t dark:border-gray-700">
                   <div className="flex items-center gap-2">
                     <span>🧑‍🏫</span>
                     {principalId ? (
-                      <span className="text-gray-700 truncate">
+                      <span className="text-gray-700 dark:text-gray-300 truncate">
                         {nombreDe(principalId)}
                       </span>
                     ) : (
@@ -391,7 +390,7 @@ export default function RotacionCliente({
                   <div className="flex items-center gap-2">
                     <span>🤝</span>
                     {ayudanteId ? (
-                      <span className="text-gray-700 truncate">
+                      <span className="text-gray-700 dark:text-gray-300 truncate">
                         {nombreDe(ayudanteId)}
                       </span>
                     ) : (
@@ -401,7 +400,7 @@ export default function RotacionCliente({
                   <div className="flex items-center gap-2">
                     <span>🧒</span>
                     {ninosId ? (
-                      <span className="text-gray-700 truncate">
+                      <span className="text-gray-700 dark:text-gray-300 truncate">
                         {nombreDe(ninosId)}
                       </span>
                     ) : (
@@ -410,11 +409,11 @@ export default function RotacionCliente({
                   </div>
                 </div>
 
-                <div className="mt-3 pt-3 border-t text-xs">
-                  <p className="text-gray-400 uppercase font-medium mb-1">
+                <div className="mt-3 pt-3 border-t dark:border-gray-700 text-xs">
+                  <p className="text-gray-400 dark:text-gray-500 uppercase font-medium mb-1">
                     🧒 Actividad niños
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-300">
                     {s.actividad_ninos || (
                       <span className="text-gray-400 italic">Sin registrar</span>
                     )}
@@ -433,11 +432,11 @@ export default function RotacionCliente({
           onClick={cerrarModal}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-800">
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                 {resultado
                   ? '✅ Resultado'
                   : '🎲 Confirmar rotación automática'}
@@ -453,31 +452,31 @@ export default function RotacionCliente({
             <div className="p-6 space-y-4">
               {!resultado ? (
                 <>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-blue-900 font-medium mb-3">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                    <p className="text-sm text-blue-900 dark:text-blue-200 font-medium mb-3">
                       📊 Resumen de la operación:
                     </p>
-                    <div className="space-y-2 text-sm text-blue-800">
+                    <div className="space-y-2 text-sm text-blue-800 dark:text-blue-300">
                       <div className="flex justify-between">
                         <span>Semanas futuras totales:</span>
                         <strong>{semanas.length}</strong>
                       </div>
                       <div className="flex justify-between">
                         <span>Faltan asignar maestros:</span>
-                        <strong className="text-yellow-700">
+                        <strong className="text-yellow-700 dark:text-yellow-400">
                           {sinAsignar.length}
                         </strong>
                       </div>
                       <div className="flex justify-between">
                         <span>Ya completas:</span>
-                        <strong className="text-green-700">
+                        <strong className="text-green-700 dark:text-green-400">
                           {completas.length}
                         </strong>
                       </div>
                       {sinTema.length > 0 && (
                         <div className="flex justify-between">
                           <span>Sin tema registrado:</span>
-                          <strong className="text-yellow-700">
+                          <strong className="text-yellow-700 dark:text-yellow-400">
                             {sinTema.length}
                           </strong>
                         </div>
@@ -485,11 +484,11 @@ export default function RotacionCliente({
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <p className="text-sm font-medium text-gray-800 mb-2">
+                  <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
                       ℹ️ ¿Qué hará el sistema?
                     </p>
-                    <ul className="text-xs text-gray-700 space-y-1.5 list-disc list-inside">
+                    <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1.5 list-disc list-inside">
                       <li>
                         Asignará maestros solo a las{' '}
                         <strong>semanas que estén vacías</strong>.
@@ -531,7 +530,7 @@ export default function RotacionCliente({
                     <button
                       onClick={cerrarModal}
                       disabled={generando}
-                      className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50"
+                      className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
                     >
                       Cancelar
                     </button>
@@ -542,13 +541,15 @@ export default function RotacionCliente({
                   <div
                     className={`rounded-lg p-4 border ${
                       resultado.exito
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-red-50 border-red-200'
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700'
+                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'
                     }`}
                   >
                     <p
                       className={`text-sm font-medium ${
-                        resultado.exito ? 'text-green-800' : 'text-red-800'
+                        resultado.exito
+                          ? 'text-green-800 dark:text-green-300'
+                          : 'text-red-800 dark:text-red-300'
                       }`}
                     >
                       {resultado.mensaje}
@@ -557,7 +558,7 @@ export default function RotacionCliente({
 
                   {resultado.detalle.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Detalle por semana:
                       </p>
                       <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -566,12 +567,12 @@ export default function RotacionCliente({
                             key={i}
                             className={`rounded-lg p-3 border ${
                               d.cambio
-                                ? 'bg-white border-red-200'
-                                : 'bg-gray-50 border-gray-200'
+                                ? 'bg-white dark:bg-gray-700 border-red-200 dark:border-red-700'
+                                : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
                             }`}
                           >
                             <div className="flex justify-between items-start mb-2 gap-2">
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {new Date(
                                   d.fecha + 'T12:00:00'
                                 ).toLocaleDateString('es-ES', {
@@ -583,17 +584,17 @@ export default function RotacionCliente({
                               <span
                                 className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                                   d.cambio
-                                    ? 'bg-red-100 text-red-800'
-                                    : 'bg-gray-200 text-gray-700'
+                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                                    : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                                 }`}
                               >
                                 {d.cambio ? 'Actualizada' : 'Sin cambios'}
                               </span>
                             </div>
-                            <p className="text-sm font-medium text-gray-800 mb-2 break-words">
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-2 break-words">
                               {d.tema}
                             </p>
-                            <div className="space-y-1 text-xs text-gray-700">
+                            <div className="space-y-1 text-xs text-gray-700 dark:text-gray-300">
                               <p>
                                 🧑‍🏫 <strong>Principal:</strong> {d.principal}
                               </p>
@@ -605,11 +606,11 @@ export default function RotacionCliente({
                               </p>
                             </div>
 
-    {d.nota && (
-      <p className="text-xs text-yellow-700 mt-2 pt-2 border-t border-yellow-200">
-        {d.nota}
-      </p>
-    )}
+                            {d.nota && (
+                              <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-2 pt-2 border-t border-yellow-200 dark:border-yellow-700">
+                                {d.nota}
+                              </p>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -652,9 +653,9 @@ function GrupoMaestros({
   periodoLabel: string
 }) {
   return (
-    <div className="border border-gray-200 rounded-lg p-4">
-      <div className="flex justify-between items-center mb-3 pb-2 border-b">
-        <p className="text-sm font-semibold text-gray-800">{titulo}</p>
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+      <div className="flex justify-between items-center mb-3 pb-2 border-b dark:border-gray-700">
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{titulo}</p>
         <span
           className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
           style={{ backgroundColor: color }}
@@ -664,7 +665,7 @@ function GrupoMaestros({
       </div>
 
       {maestros.length === 0 ? (
-        <p className="text-xs text-gray-400 italic py-4 text-center">
+        <p className="text-xs text-gray-400 dark:text-gray-500 italic py-4 text-center">
           Sin maestros asignados
         </p>
       ) : (
@@ -676,10 +677,10 @@ function GrupoMaestros({
               return (
                 <div
                   key={m.id}
-                  className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition"
                 >
                   <div className="flex justify-between items-center gap-2 mb-1">
-                    <p className="text-xs text-gray-800 font-medium truncate">
+                    <p className="text-xs text-gray-800 dark:text-gray-200 font-medium truncate">
                       {m.nombres} {m.apellidos}
                     </p>
                     <span
@@ -689,7 +690,7 @@ function GrupoMaestros({
                       {total} clase{total === 1 ? '' : 's'}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all"
                       style={{
@@ -703,11 +704,11 @@ function GrupoMaestros({
             })}
           </div>
 
-          <div className="pt-3 border-t flex justify-between text-xs">
-            <span className="text-gray-500">
+          <div className="pt-3 border-t dark:border-gray-700 flex justify-between text-xs">
+            <span className="text-gray-500 dark:text-gray-400">
               Promedio {periodoLabel === 'todas' ? 'total' : periodoLabel}:
             </span>
-            <span className="font-bold text-gray-700">
+            <span className="font-bold text-gray-700 dark:text-gray-300">
               {promedio} clase{promedio === 1 ? '' : 's'}
             </span>
           </div>

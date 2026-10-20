@@ -41,10 +41,10 @@ export default function RestriccionesCliente({
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         🚫 Restricciones y ausencias
       </h1>
-      <p className="text-gray-600 mb-6 text-sm sm:text-base">
+      <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
         Configura reglas que afectan la rotación automática de maestros.
       </p>
 
@@ -55,7 +55,7 @@ export default function RestriccionesCliente({
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             tab === 'restricciones'
               ? 'text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
           style={tab === 'restricciones' ? { backgroundColor: '#E31E24' } : {}}
         >
@@ -66,7 +66,7 @@ export default function RestriccionesCliente({
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             tab === 'ausencias'
               ? 'text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
           style={tab === 'ausencias' ? { backgroundColor: '#E31E24' } : {}}
         >
@@ -130,7 +130,6 @@ function RestriccionesTab({
     setMensaje('')
     const supabase = createClient()
 
-    // Ordenar IDs para evitar duplicados (A,B) vs (B,A)
     const [m1, m2] = [maestro1, maestro2].sort()
 
     const { error } = await supabase.from('restricciones_maestros').insert({
@@ -166,13 +165,13 @@ function RestriccionesTab({
 
   return (
     <div>
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
           <div>
-            <h2 className="font-semibold text-gray-800">
+            <h2 className="font-semibold text-gray-800 dark:text-gray-100">
               👫 Restricciones de pareja
             </h2>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Define qué maestros no pueden servir la misma semana (parejas,
               familias, etc.)
             </p>
@@ -190,7 +189,7 @@ function RestriccionesTab({
         </div>
 
         {restricciones.length === 0 ? (
-          <p className="text-gray-500 text-sm text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-8">
             No hay restricciones configuradas.
           </p>
         ) : (
@@ -198,22 +197,22 @@ function RestriccionesTab({
             {restricciones.map((r) => (
               <div
                 key={r.id}
-                className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                     🚫 {mapaMaestros.get(r.maestro_1_id || '') || '—'} +{' '}
                     {mapaMaestros.get(r.maestro_2_id || '') || '—'}
                   </p>
                   {r.motivo && (
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       {r.motivo}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={() => handleEliminar(r.id)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium ml-2"
+                  className="text-red-600 dark:text-red-400 hover:text-red-800 text-sm font-medium ml-2"
                 >
                   Eliminar
                 </button>
@@ -230,11 +229,11 @@ function RestriccionesTab({
           onClick={() => setMostrarModal(false)}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-md w-full"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-bold text-gray-800">
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                 👫 Nueva restricción
               </h3>
               <button
@@ -246,13 +245,13 @@ function RestriccionesTab({
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Maestro 1
                 </label>
                 <select
                   value={maestro1}
                   onChange={(e) => setMaestro1(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">— Seleccionar —</option>
                   {maestros.map((m) => (
@@ -263,13 +262,13 @@ function RestriccionesTab({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Maestro 2
                 </label>
                 <select
                   value={maestro2}
                   onChange={(e) => setMaestro2(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">— Seleccionar —</option>
                   {maestros.map((m) => (
@@ -280,7 +279,7 @@ function RestriccionesTab({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Motivo (opcional)
                 </label>
                 <input
@@ -288,12 +287,12 @@ function RestriccionesTab({
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
                   placeholder="Ej: Son esposos"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
               {mensaje && (
-                <p className="text-sm text-center text-red-600">{mensaje}</p>
+                <p className="text-sm text-center text-red-600 dark:text-red-400">{mensaje}</p>
               )}
 
               <div className="flex gap-2">
@@ -307,7 +306,7 @@ function RestriccionesTab({
                 </button>
                 <button
                   onClick={() => setMostrarModal(false)}
-                  className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
+                  className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Cancelar
                 </button>
@@ -396,13 +395,13 @@ function AusenciasTab({
 
   return (
     <div>
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
           <div>
-            <h2 className="font-semibold text-gray-800">
+            <h2 className="font-semibold text-gray-800 dark:text-gray-100">
               🏖️ Ausencias de maestros
             </h2>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Registra las fechas en que un maestro no estará disponible.
               No se le asignará en la rotación automática durante ese periodo.
             </p>
@@ -420,7 +419,7 @@ function AusenciasTab({
         </div>
 
         {ausencias.length === 0 ? (
-          <p className="text-gray-500 text-sm text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-8">
             No hay ausencias registradas.
           </p>
         ) : (
@@ -428,25 +427,25 @@ function AusenciasTab({
             {ausencias.map((a) => (
               <div
                 key={a.id}
-                className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                     👤 {mapaMaestros.get(a.maestro_id || '') || '—'}
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     📅 Del {formatFecha(a.fecha_desde)} al{' '}
                     {formatFecha(a.fecha_hasta)}
                   </p>
                   {a.motivo && (
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {a.motivo}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={() => handleEliminar(a.id)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium ml-2"
+                  className="text-red-600 dark:text-red-400 hover:text-red-800 text-sm font-medium ml-2"
                 >
                   Eliminar
                 </button>
@@ -463,11 +462,11 @@ function AusenciasTab({
           onClick={() => setMostrarModal(false)}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-md w-full"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-bold text-gray-800">
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                 🏖️ Nueva ausencia
               </h3>
               <button
@@ -479,13 +478,13 @@ function AusenciasTab({
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Maestro *
                 </label>
                 <select
                   value={maestroId}
                   onChange={(e) => setMaestroId(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">— Seleccionar —</option>
                   {maestros.map((m) => (
@@ -497,30 +496,30 @@ function AusenciasTab({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Desde *
                   </label>
                   <input
                     type="date"
                     value={fechaDesde}
                     onChange={(e) => setFechaDesde(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Hasta *
                   </label>
                   <input
                     type="date"
                     value={fechaHasta}
                     onChange={(e) => setFechaHasta(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Motivo (opcional)
                 </label>
                 <input
@@ -528,12 +527,12 @@ function AusenciasTab({
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
                   placeholder="Ej: Viaje familiar, salud, etc."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
               {mensaje && (
-                <p className="text-sm text-center text-red-600">{mensaje}</p>
+                <p className="text-sm text-center text-red-600 dark:text-red-400">{mensaje}</p>
               )}
 
               <div className="flex gap-2">
@@ -547,7 +546,7 @@ function AusenciasTab({
                 </button>
                 <button
                   onClick={() => setMostrarModal(false)}
-                  className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
+                  className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Cancelar
                 </button>

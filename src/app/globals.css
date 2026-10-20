@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ===== TEMA GRACIA IGLESIA CRISTIANA ===== */
 @theme {
   /* Colores principales */
@@ -8,7 +10,8 @@
   --color-gracia-200: #fecaca;
   --color-gracia-300: #fca5a5;
   --color-gracia-400: #f87171;
-  --color-gracia-500: #E31E24; /* Rojo principal del logo */
+  --color-gracia-500: #E31E24;
+  /* Rojo principal del logo */
   --color-gracia-600: #c41820;
   --color-gracia-700: #a0141a;
   --color-gracia-800: #7c1014;
@@ -79,13 +82,25 @@ textarea {
 
 /* ===== ANIMACIONES ===== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -112,6 +127,7 @@ button {
 
 /* ===== ESTILOS DE IMPRESIÓN (para PDF) ===== */
 @media print {
+
   /* Ocultar elementos que no van en el PDF */
   .no-print,
   aside,
@@ -142,7 +158,15 @@ button {
   }
 
   /* Encabezados más visibles */
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     color: #000 !important;
+  }
+
+  /* Dark mode global */
+  .dark body {
+    background-color: #111827;
+    color: #f3f4f6;
   }
 }

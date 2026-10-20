@@ -87,7 +87,7 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Fecha (domingo) *
         </label>
         <input
@@ -96,12 +96,12 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           value={form.fecha}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Tema *
         </label>
         <input
@@ -111,12 +111,12 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           onChange={handleChange}
           required
           placeholder="Ej: El servicio"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Versículos de estudio
         </label>
         <textarea
@@ -125,7 +125,7 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           onChange={handleChange}
           rows={2}
           placeholder="Ej: Mateo 20:26-28, Juan 12:26, Mateo 23:11"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-2">
           <BotonIAVersiculos
@@ -134,14 +134,14 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
               setForm({ ...form, pasaje_biblico: versiculos })
             }}
           />
-          <p className="text-xs text-gray-500 italic">
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic">
             💡 Los versículos son referenciales y puedes modificarlos cuando desees
           </p>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Versículo para memorizar
         </label>
         <textarea
@@ -150,12 +150,12 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           onChange={handleChange}
           rows={3}
           placeholder="Ej: El más importante entre ustedes será siervo de los demás. Mateo 23:11"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Manualidad
         </label>
         <textarea
@@ -164,16 +164,16 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           onChange={handleChange}
           rows={3}
           placeholder="Ej: Sombreros de cafetería, y servir en el bar de la iglesia."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       {/* 🆕 Actividad para niños pequeños */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <label className="block text-sm font-medium text-gray-800 mb-1">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
           🧒 Actividad para niños pequeños
         </label>
-        <p className="text-xs text-gray-600 mb-3">
+        <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
           💡 Recomendación: que la actividad esté relacionada con el tema de la clase
           (ej: pintar imágenes, juegos, canciones, dinámicas).
         </p>
@@ -183,11 +183,13 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
           onChange={handleChange}
           rows={3}
           placeholder="Ej: Pintar una imagen de Jesús sirviendo a los demás, y jugar a 'servir a mi amigo'."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
-      {mensaje && <p className="text-sm text-center text-gray-700">{mensaje}</p>}
+      {mensaje && (
+        <p className="text-sm text-center text-gray-700 dark:text-gray-300">{mensaje}</p>
+      )}
 
       <div className="flex gap-3 pt-4">
         <button
@@ -204,7 +206,7 @@ export default function SemanaForm({ semana }: { semana?: Semana }) {
             type="button"
             onClick={handleDelete}
             disabled={cargando}
-            className="px-6 py-2 rounded-lg border border-red-600 text-red-600 font-medium hover:bg-red-50 disabled:opacity-50"
+            className="px-6 py-2 rounded-lg border border-red-600 dark:border-red-400 text-red-600 dark:text-red-400 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
           >
             Eliminar
           </button>

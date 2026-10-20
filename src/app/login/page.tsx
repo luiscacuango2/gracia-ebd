@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -30,29 +31,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-red-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 transition-colors">
       <div className="max-w-md w-full">
         {/* Logo y título */}
         <div className="text-center mb-8">
-          <div className="inline-block bg-white rounded-2xl shadow-lg p-6 mb-4">
-            <h1
-              className="text-5xl font-bold tracking-tight"
-              style={{ color: '#E31E24' }}
-            >
-              GRACIA
-            </h1>
-            <p className="text-gray-600 mt-2 text-sm font-medium tracking-widest uppercase">
-              Iglesia Cristiana
-            </p>
+          <div className="inline-block bg-white rounded-2xl shadow-lg p-4 mb-4">
+            <Image
+              src="/logo.png"
+              alt="Gracia Iglesia Cristiana"
+              width={280}
+              height={100}
+              className="mx-auto object-contain"
+              style={{ width: '100%', height: 'auto' }}
+              priority
+            />
           </div>
-          <p className="text-gray-500 text-sm">
-            Escuela Bíblica Dominical
-          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Escuela Bíblica Dominical</p>
         </div>
 
         {/* Card de login */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-6 text-center">
             Inicia sesión con tu correo
           </h2>
 
@@ -67,7 +66,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="tu@correo.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
 
@@ -83,11 +82,10 @@ export default function LoginPage() {
 
           {mensaje && (
             <div
-              className={`mt-5 p-3 rounded-xl text-sm text-center ${
-                mensaje.startsWith('✅')
-                  ? 'bg-green-50 text-green-800 border border-green-200'
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}
+              className={`mt-5 p-3 rounded-xl text-sm text-center ${mensaje.startsWith('✅')
+                ? 'bg-green-50 text-green-800 border border-green-200'
+                : 'bg-red-50 text-red-800 border border-red-200'
+                }`}
             >
               {mensaje}
             </div>
@@ -100,7 +98,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
           © {new Date().getFullYear()} Gracia Iglesia Cristiana
         </p>
       </div>

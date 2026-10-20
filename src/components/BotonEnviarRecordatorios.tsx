@@ -23,7 +23,6 @@ export default function BotonEnviarRecordatorios({
   const handleAbrir = () => {
     setAbierto(true)
     setResultado(null)
-    // Por defecto, marcar a todos los que existan
     const iniciales: string[] = []
     if (tienePrincipal) iniciales.push('principal')
     if (tieneNinos) iniciales.push('ninos')
@@ -82,7 +81,7 @@ export default function BotonEnviarRecordatorios({
     <>
       <button
         onClick={handleAbrir}
-        className="inline-block px-4 py-2 rounded-lg border border-purple-600 text-purple-600 text-sm font-medium hover:bg-purple-50"
+        className="inline-block px-4 py-2 rounded-lg border border-purple-600 dark:border-purple-400 text-purple-600 dark:text-purple-400 text-sm font-medium hover:bg-purple-50 dark:hover:bg-purple-900/20"
       >
         📧 Enviar recordatorios
       </button>
@@ -93,24 +92,24 @@ export default function BotonEnviarRecordatorios({
           onClick={cerrar}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex justify-between items-center">
+            <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
               <div className="min-w-0">
-                <h2 className="text-lg font-bold text-gray-800">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                   📧 Enviar recordatorios
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5 capitalize truncate">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize truncate">
                   {fechaFormateada}
                 </p>
-                <p className="text-sm font-semibold text-gray-700 truncate">
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate">
                   {semanaTema}
                 </p>
               </div>
               <button
                 onClick={cerrar}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
               >
                 ×
               </button>
@@ -119,25 +118,25 @@ export default function BotonEnviarRecordatorios({
             <div className="p-6 space-y-4">
               {!resultado ? (
                 <>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <p className="text-xs text-blue-800">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                    <p className="text-xs text-blue-800 dark:text-blue-300">
                       ℹ️ Elige a quién enviar el recordatorio por correo
                       electrónico. Cada maestro recibirá su mensaje personalizado.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Destinatarios
                     </label>
                     <div className="space-y-2">
                       <label
                         className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${
                           !tienePrincipal
-                            ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200'
+                            ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
                             : destinatarios.includes('principal')
-                              ? 'bg-red-50 border-red-300'
-                              : 'border-gray-200 hover:bg-gray-50'
+                              ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700'
+                              : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                       >
                         <input
@@ -148,10 +147,10 @@ export default function BotonEnviarRecordatorios({
                           className="w-4 h-4"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                             🧑‍🏫 Maestro principal
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {tienePrincipal
                               ? 'Incluye tema, versículos, manualidad, actividad de niños y enlace de edición.'
                               : '⚠️ No hay maestro principal asignado'}
@@ -162,10 +161,10 @@ export default function BotonEnviarRecordatorios({
                       <label
                         className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${
                           !tieneNinos
-                            ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200'
+                            ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
                             : destinatarios.includes('ninos')
-                              ? 'bg-red-50 border-red-300'
-                              : 'border-gray-200 hover:bg-gray-50'
+                              ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700'
+                              : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                       >
                         <input
@@ -176,10 +175,10 @@ export default function BotonEnviarRecordatorios({
                           className="w-4 h-4"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                             🧒 Maestro de niños
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {tieneNinos
                               ? 'Incluye tema, versículo y la actividad para niños pequeños.'
                               : '⚠️ No hay maestro de niños asignado'}
@@ -190,7 +189,7 @@ export default function BotonEnviarRecordatorios({
                   </div>
 
                   {destinatarios.length === 0 && (
-                    <p className="text-xs text-center text-yellow-700">
+                    <p className="text-xs text-center text-yellow-700 dark:text-yellow-400">
                       ⚠️ Selecciona al menos un destinatario
                     </p>
                   )}
@@ -207,14 +206,14 @@ export default function BotonEnviarRecordatorios({
                     <button
                       onClick={cerrar}
                       disabled={cargando}
-                      className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50"
+                      className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
                     >
                       Cancelar
                     </button>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <p className="text-xs text-gray-600">
+                  <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                    <p className="text-xs text-gray-600 dark:text-gray-300">
                       🤖 <strong>Automático:</strong> el sistema envía los
                       recordatorios automáticamente <strong>1 día antes</strong> de cada
                       clase.
@@ -226,15 +225,15 @@ export default function BotonEnviarRecordatorios({
                   <div
                     className={`rounded-lg p-4 border ${
                       resultado.exito
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-red-50 border-red-200'
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700'
+                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'
                     }`}
                   >
                     <p
                       className={`text-sm font-medium ${
                         resultado.exito
-                          ? 'text-green-800'
-                          : 'text-red-800'
+                          ? 'text-green-800 dark:text-green-300'
+                          : 'text-red-800 dark:text-red-300'
                       }`}
                     >
                       {resultado.mensaje}
@@ -243,7 +242,7 @@ export default function BotonEnviarRecordatorios({
 
                   {resultado.resultados && resultado.resultados.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         Correos enviados:
                       </p>
                       <div className="space-y-1">
@@ -252,8 +251,8 @@ export default function BotonEnviarRecordatorios({
                             key={i}
                             className={`flex items-center gap-2 p-2 rounded-lg text-xs ${
                               r.exito
-                                ? 'bg-green-50 text-green-800'
-                                : 'bg-red-50 text-red-800'
+                                ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                                : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                             }`}
                           >
                             <span>{r.exito ? '✅' : '❌'}</span>
