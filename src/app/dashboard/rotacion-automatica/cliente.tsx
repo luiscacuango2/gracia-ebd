@@ -359,7 +359,7 @@ export default function RotacionCliente({
                       })}
                     </p>
                     <h3
-                      className={`font-bold mt-1 break-words ${
+                      className={`font-bold mt-1 wrap-break-word ${
                         sinTemaSemana
                           ? 'text-gray-400 italic'
                           : 'text-gray-800 dark:text-gray-100'
@@ -591,7 +591,7 @@ export default function RotacionCliente({
                                 {d.cambio ? 'Actualizada' : 'Sin cambios'}
                               </span>
                             </div>
-                            <p className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-2 break-words">
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-2 wrap-break-word">
                               {d.tema}
                             </p>
                             <div className="space-y-1 text-xs text-gray-700 dark:text-gray-300">

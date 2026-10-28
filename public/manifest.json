@@ -1,0 +1,37 @@
+{
+  "name": "Gracia Niños - Escuela Bíblica Dominical",
+  "short_name": "Gracia Niños",
+  "description": "Sistema de estrellas y puntos para los niños de la Escuela Bíblica Dominical",
+  "start_url": "/puntos",
+  "display": "standalone",
+  "background_color": "#E31E24",
+  "theme_color": "#E31E24",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+  {
+    "src": "/icon-192.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any"
+  },
+  {
+    "src": "/icon-192.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "maskable"
+  },
+  {
+    "src": "/icon-512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "any"
+  },
+  {
+    "src": "/icon-512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "maskable"
+  }
+]
+}

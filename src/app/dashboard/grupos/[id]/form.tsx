@@ -56,7 +56,6 @@ export default function GestionGrupo({
     setCargando(false)
   }
 
-  // 🆕 Ordenar maestros alfabéticamente
   const maestrosOrdenados = [...maestros].sort((a, b) =>
     `${a.nombres} ${a.apellidos}`.localeCompare(
       `${b.nombres} ${b.apellidos}`,
@@ -66,23 +65,24 @@ export default function GestionGrupo({
 
   return (
     <div>
-      <p className="text-sm text-gray-600 mb-4">
+      {/* 🆕 Subtítulo con dark */}
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
         Marca los maestros que pertenecen a este grupo:
       </p>
 
-      <div className="space-y-2 max-h-96 overflow-y-auto mb-6">
+      <div className="space-y-2 max-h-96 overflow-y-auto mb-6 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700">
         {maestrosOrdenados.map((m) => (
           <label
             key={m.id}
-            className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+            className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
           >
             <input
               type="checkbox"
               checked={seleccionados.includes(m.id)}
               onChange={() => toggle(m.id)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-red-600"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               {m.nombres} {m.apellidos}
             </span>
           </label>
@@ -90,21 +90,21 @@ export default function GestionGrupo({
       </div>
 
       {mensaje && (
-        <p className="text-sm text-center text-gray-700 mb-4">{mensaje}</p>
+        <p className="text-sm text-center font-medium text-gray-700 dark:text-gray-300 mb-4">{mensaje}</p>
       )}
 
       <div className="flex gap-3">
         <button
           onClick={handleGuardar}
           disabled={cargando}
-          className="px-6 py-2 rounded-lg text-white font-medium disabled:opacity-50"
+          className="px-6 py-2 rounded-lg text-white font-medium disabled:opacity-50 transition-colors"
           style={{ backgroundColor: '#E31E24' }}
         >
           {cargando ? 'Guardando...' : 'Guardar cambios'}
         </button>
         <button
           onClick={() => router.push('/dashboard/grupos')}
-          className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
+          className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           Volver
         </button>

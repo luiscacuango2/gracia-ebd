@@ -9,6 +9,8 @@ const RUTAS_ADMIN = [
   '/dashboard/restricciones',
   '/dashboard/rotacion-automatica',
   '/dashboard/rotaciones',
+  '/dashboard/ninos',
+  '/dashboard/premios',
 ]
 
 export async function middleware(request: NextRequest) {
@@ -53,7 +55,10 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith(ruta)
     )
 
-    if (esRutaAdmin) {
+    // 🆕 EXCEPCIÓN: La impresión de QRs es accesible para todos los maestros
+    const esImprimirQR = request.nextUrl.pathname.startsWith('/dashboard/ninos/imprimir-qr')
+
+    if (esRutaAdmin && !esImprimirQR) {
       const { data: maestro } = await supabase
         .from('maestros')
         .select('rol')
@@ -71,5 +76,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  // Añadimos '/puntos' y sus subrutas para que sean accesibles
+  matcher: ['/dashboard/:path*', '/login', '/puntos/:path*', '/puntos'],
 }

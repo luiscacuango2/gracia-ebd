@@ -160,7 +160,7 @@ export default function BotonWhatsApp({
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex-1 min-w-0">
                   {m.titulo}
                 </span>
-                <div className="flex gap-1 flex-shrink-0">
+                <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => compartir(m.texto)}
                     className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90"

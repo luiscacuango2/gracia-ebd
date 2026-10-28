@@ -91,7 +91,7 @@ export default async function GruposPage() {
                       key={m.id}
                       className="flex items-center gap-2 text-sm"
                     >
-                      <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
                       <span className="text-gray-700 dark:text-gray-300 truncate">
                         {m.nombres} {m.apellidos}
                       </span>

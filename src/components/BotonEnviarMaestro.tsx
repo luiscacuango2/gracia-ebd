@@ -126,7 +126,7 @@ export default function BotonEnviarMaestro({
               </div>
               <button
                 onClick={cerrar}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl flex-shrink-0 ml-2"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl shrink-0 ml-2"
               >
                 ×
               </button>

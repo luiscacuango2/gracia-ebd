@@ -41,7 +41,6 @@ export default async function ReportesPage() {
     (asignaciones ?? []).map((a) => [a.semana_id, a])
   )
 
-  // Conteos por maestro y por rol
   const conteoPrincipal = new Map<string, number>()
   const conteoAyudante = new Map<string, number>()
   const conteoNinos = new Map<string, number>()
@@ -82,7 +81,6 @@ export default async function ReportesPage() {
   const maestrosAyudantes = filtroGrupo('ayudantes') as { id: string; nombres: string; apellidos: string }[]
   const maestrosNinos = filtroGrupo('ninos') as { id: string; nombres: string; apellidos: string }[]
 
-  // 🆕 Consolidar: una fila por maestro único con conteos por rol
   const idsUnicos = new Set<string>()
   ;[...maestrosPrincipales, ...maestrosAyudantes, ...maestrosNinos].forEach(
     (m) => idsUnicos.add(m.id)
@@ -121,12 +119,10 @@ export default async function ReportesPage() {
     total: number
   }[]
 
-  // Si no es admin, solo ve su propia fila
   if (!esAdmin) {
     maestrosConsolidados = maestrosConsolidados.filter((m) => m.id === yo.id)
   }
 
-  // Filtrar semanas según rol
   const semanasParaMostrar = esAdmin
     ? (semanas ?? [])
     : (semanas ?? []).filter((s) => {
@@ -161,12 +157,37 @@ export default async function ReportesPage() {
     }
   })
 
+  // 🆕 Cargar datos de puntos por separado (sin relaciones)
+  const { data: puntosNinos } = await supabase
+    .from('puntos_ninos')
+    .select('id, nino_id, semana_id, asistencia, comportamiento, versiculo')
+
+  // 🆕 Cargar nombres de niños y fechas de semanas
+  const { data: listaNinos } = await supabase
+    .from('ninos')
+    .select('id, nombres, apellidos')
+
+  const { data: listaSemanas } = await supabase
+    .from('semanas')
+    .select('id, fecha')
+
+  // 🆕 Unir los datos manualmente
+  const mapaNinos = new Map((listaNinos ?? []).map((n) => [n.id, n]))
+  const mapaSemanas = new Map((listaSemanas ?? []).map((s) => [s.id, s]))
+
+  const puntosConDatos = (puntosNinos ?? []).map((p) => ({
+    ...p,
+    ninos: mapaNinos.get(p.nino_id) || null,
+    semanas: mapaSemanas.get(p.semana_id) || null,
+  }))
+
   return (
     <ReportesCliente
       semanas={semanasConDatos}
       maestros={maestrosConsolidados}
       esAdmin={esAdmin}
       nombreUsuario={`${yo.nombres} ${yo.apellidos}`}
+      puntosNinos={puntosConDatos}
     />
   )
 }

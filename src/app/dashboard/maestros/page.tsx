@@ -118,7 +118,7 @@ export default async function MaestrosPage() {
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{m.correo}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${m.rol === 'admin' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'}`}>
                       {m.rol}
                     </span>

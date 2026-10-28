@@ -62,10 +62,14 @@ export default function DashboardLayout({
   const links = [
     { href: '/dashboard', label: 'Inicio', icon: '🏠', exact: true },
     { href: '/dashboard/semanas', label: 'Semanas', icon: '📅' },
-    { href: '/dashboard/reportes', label: 'Reportes', icon: '📊' },
+    { href: '/dashboard/puntos', label: 'Puntos Niños', icon: '⭐' }, 
+    { href: '/dashboard/cartelera', label: 'Cartelera General', icon: '🏆' },
+    { href: '/dashboard/reportes', label: 'Reportes', icon: '📊' }, 
   ]
 
   const adminLinks = [
+    { href: '/dashboard/ninos', label: 'Niños', icon: '👶' }, // niños
+    { href: '/dashboard/premios', label: 'Premios', icon: '🎁' },  // premios
     { href: '/dashboard/maestros', label: 'Maestros', icon: '🧑‍' },
     { href: '/dashboard/grupos', label: 'Grupos de maestros', icon: '👥' },
     { href: '/dashboard/restricciones', label: 'Restricciones y ausencias', icon: '🚫' },
@@ -115,7 +119,7 @@ export default function DashboardLayout({
           }`}
       >
         {/* Header del menú */}
-        <div className={`${colapsado && esMovil ? 'p-2' : 'p-3'} border-b flex items-center justify-between gap-2 ${colapsado && esMovil ? 'min-h-[56px]' : 'min-h-[73px]'} bg-white dark:bg-gray-800`}>
+        <div className={`${colapsado && esMovil ? 'p-2' : 'p-3'} border-b flex items-center justify-between gap-2 ${colapsado && esMovil ? 'min-h-14' : 'min-h-18.25'} bg-white dark:bg-gray-800`}>
           {!colapsado ? (
             <div className="flex-1 min-w-0">
               <Image

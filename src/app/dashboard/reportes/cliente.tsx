@@ -26,7 +26,7 @@ type MaestroConteo = {
   total: number
 }
 
-type TipoReporte = 'semanas' | 'maestros' | 'ninos'
+type TipoReporte = 'semanas' | 'maestros' | 'ninos' | 'puntos'
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -38,15 +38,24 @@ export default function ReportesCliente({
   maestros,
   esAdmin = true,
   nombreUsuario = '',
+  puntosNinos = [],
+  rankingNinos = [],
 }: {
   semanas: Semana[]
   maestros: MaestroConteo[]
   esAdmin?: boolean
   nombreUsuario?: string
+  puntosNinos?: any[]
+  rankingNinos?: any[]
 }) {
   const [tipoReporte, setTipoReporte] = useState<TipoReporte>('semanas')
-  const [fechaDesde, setFechaDesde] = useState('')
-  const [fechaHasta, setFechaHasta] = useState('')
+  // Inicializar fechas al mes actual
+  const hoy = new Date()
+  const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0]
+  const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0]
+
+  const [fechaDesde, setFechaDesde] = useState(primerDiaMes)
+  const [fechaHasta, setFechaHasta] = useState(ultimoDiaMes)
   const [mesSeleccionado, setMesSeleccionado] = useState<string>('')
 
   // Filtrar semanas
@@ -77,6 +86,51 @@ export default function ReportesCliente({
     }
     return 'Reporte de clases asignadas'
   }, [mesSeleccionado])
+
+  // Filtrar puntos por fecha
+  const puntosFiltrados = useMemo(() => {
+    return puntosNinos.filter((p: any) => {
+      const fechaSemana = p.semanas?.fecha
+      if (!fechaSemana) return false
+      if (fechaDesde && fechaSemana < fechaDesde) return false
+      if (fechaHasta && fechaSemana > fechaHasta) return false
+      return true
+    })
+  }, [puntosNinos, fechaDesde, fechaHasta])
+
+  // Resumen de puntos por niño
+  const resumenPuntos = useMemo(() => {
+    const map = new Map<string, {
+      nombres: string
+      apellidos: string
+      asistencia: number
+      comportamiento: number
+      versiculo: number
+      total: number
+    }>()
+
+    puntosFiltrados.forEach((p: any) => {
+      const nino = p.ninos
+      if (!nino) return
+      const key = p.nino_id
+      if (!map.has(key)) {
+        map.set(key, {
+          nombres: nino.nombres,
+          apellidos: nino.apellidos,
+          asistencia: 0,
+          comportamiento: 0,
+          versiculo: 0,
+          total: 0,
+        })
+      }
+      const r = map.get(key)!
+      if (p.asistencia) { r.asistencia++; r.total++ }
+      if (p.comportamiento) { r.comportamiento++; r.total++ }
+      if (p.versiculo) { r.versiculo++; r.total++ }
+    })
+
+    return Array.from(map.values()).sort((a, b) => b.total - a.total)
+  }, [puntosFiltrados])
 
   const exportarExcel = () => {
     if (tipoReporte === 'semanas') {
@@ -125,7 +179,6 @@ export default function ReportesCliente({
           m.ninos,
           m.total,
         ])
-      // Agregar fila de totales
       filas.push([
         'TOTALES',
         maestros.reduce((sum, m) => sum + m.principal, 0),
@@ -134,6 +187,23 @@ export default function ReportesCliente({
         maestros.reduce((sum, m) => sum + m.total, 0),
       ])
       descargarCSV(headers, filas, 'reporte_maestros')
+    } else if (tipoReporte === 'puntos') {
+      const headers = ['Niño/a', 'Asistencia', 'Comportamiento', 'Versículo', 'Total Estrellas']
+      const filas = resumenPuntos.map((n) => [
+        `${n.nombres} ${n.apellidos}`,
+        n.asistencia,
+        n.comportamiento,
+        n.versiculo,
+        n.total,
+      ])
+      filas.push([
+        'TOTALES',
+        resumenPuntos.reduce((s, n) => s + n.asistencia, 0),
+        resumenPuntos.reduce((s, n) => s + n.comportamiento, 0),
+        resumenPuntos.reduce((s, n) => s + n.versiculo, 0),
+        resumenPuntos.reduce((s, n) => s + n.total, 0),
+      ])
+      descargarCSV(headers, filas, 'reporte_puntos_ninos')
     } else {
       const headers = ['Fecha', 'Tema', 'Actividad para niños', 'Maestro de niños']
       const filas = semanasFiltradas
@@ -217,6 +287,7 @@ export default function ReportesCliente({
                 <option value="maestros">🧑‍🏫 Maestros (conteo)</option>
               )}
               <option value="ninos">🧒 Actividades de niños</option>
+              <option value="puntos">⭐ Puntos de Niños</option>
             </select>
           </div>
 
@@ -534,13 +605,76 @@ export default function ReportesCliente({
           </>
         )}
 
-        {((tipoReporte === 'semanas' && semanasFiltradas.length === 0) ||
-          (tipoReporte === 'maestros' && esAdmin && maestros.length === 0) ||
-          (tipoReporte === 'ninos' && semanasFiltradas.filter((s) => s.actividad_ninos).length === 0)) && (
-          <div className="p-12 text-center text-gray-500 dark:text-gray-400">No hay datos para mostrar con los filtros seleccionados.</div>
+        {tipoReporte === 'puntos' && (
+          <>
+            <div className="p-4 border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700 no-print">
+              <h2 className="font-semibold text-gray-800 dark:text-gray-100">⭐ Reporte de Puntos de Niños</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {resumenPuntos.length} niño{resumenPuntos.length === 1 ? '' : 's'} con puntos
+                {fechaDesde && ` · desde ${fechaDesde}`}
+                {fechaHasta && ` · hasta ${fechaHasta}`}
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                  <tr>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">#</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Niño/a</th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">✅ Asistencia</th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">🤝 Comportamiento</th>
+                    <th className="text-center px-3 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">📖 Versículo</th>
+                    <th className="text-center px-3 py-3 text-sm font-bold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700">⭐ Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {resumenPuntos.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                        No hay puntos registrados en este rango de fechas.
+                      </td>
+                    </tr>
+                  ) : (
+                    resumenPuntos.map((n, index) => (
+                      <tr key={`${n.nombres}-${n.apellidos}-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-4 py-3 font-bold text-gray-400">
+                          {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-100">
+                          {n.nombres} {n.apellidos}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center text-green-600 dark:text-green-400 font-medium">{n.asistencia}</td>
+                        <td className="px-3 py-3 text-sm text-center text-blue-600 dark:text-blue-400 font-medium">{n.comportamiento}</td>
+                        <td className="px-3 py-3 text-sm text-center text-purple-600 dark:text-purple-400 font-medium">{n.versiculo}</td>
+                        <td className="px-3 py-3 text-sm text-center font-black bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">{n.total}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+                {resumenPuntos.length > 0 && (
+                  <tfoot className="bg-gray-100 dark:bg-gray-700 border-t-2 dark:border-gray-600">
+                    <tr>
+                      <td colSpan={2} className="px-4 py-3 text-sm font-bold text-gray-800 dark:text-gray-200">TOTALES</td>
+                      <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 dark:text-gray-100">{resumenPuntos.reduce((s, n) => s + n.asistencia, 0)}</td>
+                      <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 dark:text-gray-100">{resumenPuntos.reduce((s, n) => s + n.comportamiento, 0)}</td>
+                      <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 dark:text-gray-100">{resumenPuntos.reduce((s, n) => s + n.versiculo, 0)}</td>
+                      <td className="px-3 py-3 text-sm text-center font-bold text-gray-900 dark:text-gray-100 bg-gray-200 dark:bg-gray-600">{resumenPuntos.reduce((s, n) => s + n.total, 0)}</td>
+                    </tr>
+                  </tfoot>
+                )}
+              </table>
+            </div>
+          </>
         )}
 
-        {/* RESPONSABILIDADES DE LOS MAESTROS */}
+        {((tipoReporte === 'semanas' && semanasFiltradas.length === 0) ||
+          (tipoReporte === 'maestros' && esAdmin && maestros.length === 0) ||
+          (tipoReporte === 'ninos' && semanasFiltradas.filter((s) => s.actividad_ninos).length === 0) ||
+          (tipoReporte === 'puntos' && resumenPuntos.length === 0)) && (
+            <div className="p-12 text-center text-gray-500 dark:text-gray-400">No hay datos para mostrar con los filtros seleccionados.</div>
+          )}
+
         {(tipoReporte === 'semanas' || tipoReporte === 'ninos') && semanasFiltradas.length > 0 && (
           <div className="p-6 border-t bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
             <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3">

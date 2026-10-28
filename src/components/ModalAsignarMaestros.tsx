@@ -310,7 +310,7 @@ export default function ModalAsignarMaestros({
           </div>
           <button
             onClick={handleCerrar}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none flex-shrink-0"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none shrink-0"
             aria-label="Cerrar"
           >
             ×

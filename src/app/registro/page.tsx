@@ -54,7 +54,7 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-red-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-red-50 p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="inline-block bg-white rounded-2xl shadow-lg p-6 mb-4">

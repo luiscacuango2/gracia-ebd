@@ -49,15 +49,15 @@ export default async function GrupoDetallePage({
 
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 capitalize">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 capitalize">
         {emoji}{' '}
         {grupo.nombre === 'ninos' ? 'Niños pequeños' : grupo.nombre}
       </h1>
-      <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">
+      <p className="text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
         {grupo.descripcion}
       </p>
 
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 max-w-2xl">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 max-w-2xl border border-gray-200 dark:border-gray-700">
         <GestionGrupo
           grupoId={grupo.id}
           maestros={maestros ?? []}

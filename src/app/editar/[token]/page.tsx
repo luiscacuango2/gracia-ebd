@@ -43,7 +43,7 @@ export default async function EditarPublicoPage({
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4 transition-colors">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4 transition-colors">
       <div className="max-w-2xl mx-auto">
         {/* Logo y título */}
         <div className="text-center mb-6">
