@@ -2,16 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ===== TEMA GRACIA IGLESIA CRISTIANA ===== */
+/* ===== TEMA GRACIA IGLESIA CRISTIANA + CARTELERA ===== */
 @theme {
-  /* Colores principales */
+  /* Colores institucionales */
   --color-gracia-50: #fef2f2;
   --color-gracia-100: #fee2e2;
   --color-gracia-200: #fecaca;
   --color-gracia-300: #fca5a5;
   --color-gracia-400: #f87171;
   --color-gracia-500: #E31E24;
-  /* Rojo principal del logo */
   --color-gracia-600: #c41820;
   --color-gracia-700: #a0141a;
   --color-gracia-800: #7c1014;
@@ -30,8 +29,25 @@
   --color-neutro-800: #1f2937;
   --color-neutro-900: #111827;
 
-  /* Fuente */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Colores de la Cartelera de Niños */
+  --color-crema-fondo: #FFF1DF;
+  --color-crema-tarjeta: #FFFBF4;
+  --color-crema-card: #FFF8EE;
+  --color-marron: #4A3428;
+  --color-marron-suave: #7A5C4A;
+  --color-durazno: #F5B89A;
+  --color-durazno-oscuro: #EFA585;
+  --color-miel: #E8B86D;
+  --color-miel-claro: #F3CD86;
+  --color-ocre: #C9923E;
+  --color-wasabi: #B5C99A;
+  --color-mejilla: #F5A8B8;
+  --color-rosa: #D97878;
+  --color-rosa-suave: #F2C4C4;
+
+  /* Fuentes */
+  --font-sans: var(--font-nunito), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-fredoka: var(--font-fredoka), "Nunito", sans-serif;
 }
 
 /* ===== ESTILOS BASE ===== */
@@ -48,16 +64,13 @@ body {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--color-neutro-100);
 }
-
 ::-webkit-scrollbar-thumb {
   background: var(--color-neutro-300);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-neutro-400);
 }
@@ -82,25 +95,28 @@ textarea {
 
 /* ===== ANIMACIONES ===== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes floatStar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatShadow {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50% { transform: translateX(-50%) scale(0.72); opacity: 0.55; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.55; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
 .animate-fade-in {
@@ -127,44 +143,31 @@ button {
 
 /* ===== ESTILOS DE IMPRESIÓN (para PDF) ===== */
 @media print {
-
-  /* Ocultar elementos que no van en el PDF */
   .no-print,
   aside,
   nav,
   button {
     display: none !important;
   }
-
-  /* Ajustar márgenes */
   body {
     background: white !important;
   }
-
   main {
     margin-left: 0 !important;
     padding: 0 !important;
   }
-
-  /* Que se vea la tabla completa */
   .print-content {
     box-shadow: none !important;
     border: none !important;
   }
-
-  /* Evitar cortes en medio de filas */
   tr {
     page-break-inside: avoid;
   }
-
-  /* Encabezados más visibles */
   h1,
   h2,
   h3 {
     color: #000 !important;
   }
-
-  /* Dark mode global */
   .dark body {
     background-color: #111827;
     color: #f3f4f6;

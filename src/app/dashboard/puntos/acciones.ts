@@ -50,14 +50,15 @@ export async function guardarPuntosSemana({
   }
 
   // Preparar datos para insertar/actualizar
-  const datos = puntos.map((p) => ({
+  const datos = puntos.map((p: any) => ({
     nino_id: p.nino_id,
     semana_id: semanaId,
-    maestro_registro_id: maestro.id, // 🆕 Volvemos a guardar quién lo registró
+    maestro_registro_id: maestro.id,
     asistencia: p.asistencia,
     comportamiento: p.comportamiento,
     versiculo: p.versiculo,
-    fecha_registro: new Date().toISOString(), // 🆕 Guardamos la fecha exacta
+    observacion: p.observacion || null, // 🆕 Guardar observación
+    fecha_registro: new Date().toISOString(),
   }))
 
   // Upsert: si ya existe, lo actualiza; si no, lo inserta

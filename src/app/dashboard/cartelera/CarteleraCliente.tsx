@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { obtenerHistorialNino } from './acciones'
 
 type NinoRanking = {
@@ -199,11 +199,13 @@ export default function CarteleraCliente({ rankingInicial }: { rankingInicial: N
                       <th className="p-3 font-semibold rounded-tr-lg">Registrado por</th>
                     </tr>
                   </thead>
-                  <tbody>
+                                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                     {historial
-                      .filter(r => r.asistencia || r.comportamiento || r.versiculo) // 🆕 Filtro extra de seguridad
+                      .filter(r => r.asistencia || r.comportamiento || r.versiculo)
                       .map((registro) => (
-                        <tr key={registro.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <Fragment key={registro.id}> 
+                        {/* Fila principal con las estrellas */}
+                        <tr className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                           <td className="p-3 text-sm font-medium text-gray-800 dark:text-gray-200">
                             {formatearFecha(registro.semanas?.fecha)}
                           </td>
@@ -222,7 +224,19 @@ export default function CarteleraCliente({ rankingInicial }: { rankingInicial: N
                             </span>
                           </td>
                         </tr>
-                      ))}
+                        {/* 🆕 Fila extra para la observación si existe */}
+                        {registro.observacion && (
+                          <tr className="bg-amber-50 dark:bg-amber-900/10 border-b border-gray-100 dark:border-gray-700">
+                            <td colSpan={5} className="px-4 py-2">
+                              <p className="text-xs text-amber-800 dark:text-amber-300 italic">
+                                <strong className="not-italic font-bold mr-1">Observación:</strong>
+                                "{registro.observacion}"
+                              </p>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    ))}
                   </tbody>
                 </table>
               )}

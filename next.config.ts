@@ -14,6 +14,8 @@ const withPWA = withPWAInit({
 })
 
 const nextConfig: NextConfig = {
+  // Silenciar el aviso de Turbopack (la PWA sigue usando Webpack para el build)
+  turbopack: {},
   // Desactivar el indicador de desarrollo (botón "N" flotante)
   devIndicators: false,
 

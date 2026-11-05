@@ -12,6 +12,7 @@ export async function obtenerHistorialNino(ninoId: string) {
       asistencia,
       comportamiento,
       versiculo,
+      observacion,
       semanas (fecha, tema),
       maestros (nombres)
     `)
