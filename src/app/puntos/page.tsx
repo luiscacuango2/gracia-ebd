@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import PuntosPublicos from './PuntosPublicos'
+import PuntosPublicos from './PuntosPublicos2'
 
 export const revalidate = 0
 
