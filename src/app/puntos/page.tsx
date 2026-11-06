@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import PuntosPublicos from './PuntosPublicos2'
+import PuntosPublicos from './PuntosPublicos'
 
 export const revalidate = 0
 
@@ -16,9 +16,9 @@ export default async function PuntosPage() {
         versiculo, 
         observacion, 
         semanas (fecha),
-        maestros (nombres, apellidos) 
+        maestros (nombres) 
       ),
-      premios_ganados (fecha_ganado)
+            premios_ganados (fecha_ganado, entregado)
     `)
     .eq('activo', true)
     .order('nombres', { ascending: true })

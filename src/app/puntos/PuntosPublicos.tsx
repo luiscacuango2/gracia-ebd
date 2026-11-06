@@ -9,11 +9,12 @@ type Punto = {
   versiculo: boolean
   observacion: string | null
   semanas: { fecha: string }[] | { fecha: string } | null
-  maestros: { nombres: string, apellidos: string } | { nombres: string, apellidos: string }[] | null
+  maestros: { nombres: string } | { nombres: string }[] | null
 }
 
 type Premio = {
   fecha_ganado: string
+  entregado: boolean // actualiza el tipo para incluir entregado
 }
 
 type Nino = {
@@ -37,51 +38,74 @@ function calcularTotales(nino: Nino) {
 
   const getMaestro = (p: Punto): string => {
     if (!p.maestros) return 'Sistema'
+
+    // Si viene como arreglo (lo más común)
     if (Array.isArray(p.maestros)) {
       const m = p.maestros[0]
-      return m ? `${m.nombres} ${m.apellidos}` : 'Sistema'
+      return m?.nombres || 'Sistema'
     }
-    return `${p.maestros.nombres} ${p.maestros.apellidos}`
+
+    // Si por alguna razón Supabase lo devuelve como objeto único
+    return (p.maestros as any).nombres || 'Sistema'
   }
 
-  // 1. Agrupar por fecha
+  // 1. Encontrar la fecha del último premio ENTREGADO
+  let fechaUltimoPremio: Date | null = null
+  if (nino.premios_ganados && nino.premios_ganados.length > 0) {
+    const premiosEntregados = nino.premios_ganados.filter(p => p.entregado === true)
+    if (premiosEntregados.length > 0) {
+      const fechas = premiosEntregados.map(p => new Date(p.fecha_ganado).getTime())
+      fechaUltimoPremio = new Date(Math.max(...fechas))
+      // Forzamos a que sea a las 00:00:00 UTC del día para comparar sin horas
+      fechaUltimoPremio.setUTCHours(0, 0, 0, 0)
+    }
+  }
+
+  // 2. Filtrar los puntos
+  const puntosValidos = (nino.puntos_ninos || []).filter(p => {
+    const fecha = getFecha(p)
+    if (!fecha) return false
+
+    if (fechaUltimoPremio) {
+      // Comparamos solo las fechas (sin horas)
+      const fechaPunto = new Date(fecha + 'T00:00:00Z')
+      return fechaPunto.getTime() > fechaUltimoPremio.getTime()
+    }
+    return true
+  })
+
+  // 3. Agrupar por fecha los puntos válidos
   const mapaFechas = new Map<string, { asistencia: number, comportamiento: number, versiculo: number, maestro: string, observacion: string | null }>()
 
-    ; (nino.puntos_ninos || []).forEach(p => {
-      const fecha = getFecha(p)
-      if (!fecha) return
+  puntosValidos.forEach(p => {
+    const fecha = getFecha(p)!
+    if (!mapaFechas.has(fecha)) {
+      mapaFechas.set(fecha, {
+        asistencia: 0,
+        comportamiento: 0,
+        versiculo: 0,
+        maestro: getMaestro(p),
+        observacion: p.observacion
+      })
+    }
+    const reg = mapaFechas.get(fecha)!
+    if (Boolean(p.asistencia)) reg.asistencia++
+    if (Boolean(p.comportamiento)) reg.comportamiento++
+    if (Boolean(p.versiculo)) reg.versiculo++
+    if (p.observacion) reg.observacion = p.observacion
+  })
 
-      if (!mapaFechas.has(fecha)) {
-        mapaFechas.set(fecha, {
-          asistencia: 0,
-          comportamiento: 0,
-          versiculo: 0,
-          maestro: getMaestro(p),
-          observacion: p.observacion
-        })
-      }
-
-      const reg = mapaFechas.get(fecha)!
-      if (Boolean(p.asistencia)) reg.asistencia++
-      if (Boolean(p.comportamiento)) reg.comportamiento++
-      if (Boolean(p.versiculo)) reg.versiculo++
-
-      if (p.observacion) reg.observacion = p.observacion
-    })
-
-  // 2. Convertir a arreglo, calcular totales y FILTRAR LOS VACÍOS
+  // 4. Calcular totales
   let totalAsistencia = 0, totalComportamiento = 0, totalVersiculo = 0
 
   const historial = Array.from(mapaFechas.entries())
     .map(([fecha, data]) => {
       const totalDia = data.asistencia + data.comportamiento + data.versiculo
-
       if (totalDia > 0) {
         totalAsistencia += data.asistencia
         totalComportamiento += data.comportamiento
         totalVersiculo += data.versiculo
       }
-
       return {
         fecha,
         asistenciaVista: data.asistencia > 0 ? 1 : 0,
@@ -92,7 +116,6 @@ function calcularTotales(nino: Nino) {
         observacion: data.observacion
       }
     })
-    // 🆕 FILTRO MÁGICO: Si el día tiene 0 estrellas, no se agrega al historial
     .filter(item => item.totalDia > 0)
     .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
 

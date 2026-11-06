@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Fredoka, Nunito } from 'next/font/google' // 🆕
 import './globals.css'
 
-// 🆕 Configuración de las fuentes
+// Configuración de las fuentes
 const fredoka = Fredoka({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
@@ -18,8 +18,8 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'Gracia Niños - EBD',
-  description: 'Sistema de estrellas y puntos de la Escuela Bíblica Dominical',
+  title: 'Gracia Iglesia Cristiana',
+  description: 'Sistema Gracia Iglesia Cristiana',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
