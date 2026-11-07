@@ -1,4 +1,4 @@
-# Gracia EBD — Sistema de Gestión para Escuela Bíblica Dominical
+# Gracia Iglesia Cristiana — Sistema de Gestión para Escuela Bíblica Dominical
 
 <div align="center">
 
@@ -15,7 +15,6 @@
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production-success?style=for-the-badge)
-![Maintained](https://img.shields.io/badge/Maintained-yes-green.svg?style=for-the-badge)
 
 **Sistema web profesional, 100% gratuito y sin fines de lucro para la gestión integral de la Escuela Bíblica Dominical.**
 
@@ -68,9 +67,10 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 ### 🔐 Autenticación y Seguridad
 
 - **Login con enlace de acceso (Magic Link)**: Sin contraseñas. Se envía un enlace único y temporal al correo del maestro.
-- **Middleware de protección de rutas**: Bloquea el acceso directo a rutas administrativas a usuarios sin permisos.
+- **Middleware (Proxy) de protección de rutas**: Bloquea el acceso directo a rutas administrativas a usuarios sin permisos.
 - **Row Level Security (RLS)** en Supabase: Políticas de seguridad a nivel de base de datos.
 - **Tokens públicos con expiración**: Enlaces de edición para maestros con token único por semana.
+- **Correos de Supabase personalizados**: Todas las plantillas (Magic Link, Recuperación, Verificación, Cambio de correo) tienen el logo y los colores institucionales.
 
 ### 📅 Gestión de Semanas
 
@@ -78,6 +78,7 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 - **Actividad para niños pequeños**: Campo exclusivo para el maestro de párvulos.
 - **Filtro de semanas**: Todas / Futuras / Pasadas.
 - **Estados visuales**: Badges "Futura" y "Dictada" según la fecha.
+- **Selector de semana actual**: La semana en curso se marca con un badge "HOY" o "PRÓXIMA".
 
 ### 👥 Gestión de Maestros
 
@@ -107,15 +108,18 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 
 - **3 estrellas semanales**: Asistencia, Comportamiento y Versículo.
 - **Registro por maestro**: Solo el maestro principal de la semana o admin puede registrar puntos.
-- **Ventana pública** (`/puntos`): Los padres pueden consultar los puntos de sus hijos.
-- **Buscador por código secreto**: Cada niño tiene un código único (ej. `AITANA2018`) que se puede ingresar o leer desde un QR.
+- **Observaciones**: Campo opcional para justificar por qué no se otorgó una estrella, visible en la cartelera pública y en el historial.
+- **Ventana pública** (`/puntos`): Los padres pueden consultar los puntos de sus hijos con diseño "soft UI" (colores pastel, estrellas animadas, tipografía Fredoka).
+- **Buscador por código secreto**: Cada niño tiene un código único de 4 dígitos (ej. `0303`).
 - **QR por niño**: Cada niño tiene un código QR que abre directamente su tarjeta de puntos.
 - **Envío por WhatsApp**: Botón para enviar el enlace de puntos al padre con mensaje preformateado.
 - **Impresión masiva de QRs**: Página para imprimir los QRs de todos los niños en formato de carnets.
 - **Cartelera General**: Vista para maestros y admins con las tarjetas de todos los niños y sus barras de progreso.
-- **Historial por niño**: Ver el desglose semanal de estrellas y qué maestro las registró.
+- **Historial por niño**: Modal con el desglose semanal de estrellas, ordenado del más reciente al más antiguo, mostrando el nombre del maestro que registró.
+- **Racha de asistencias 🔥**: Cálculo de semanas consecutivas de asistencia, comparando contra las fechas de la tabla `semanas` (no se rompe por feriados).
+- **Sincronización externa**: Los códigos de 4 dígitos y los totales de estrellas coinciden exactamente con el sistema de la cartelera física externa.
 - **Reporte de puntos**: Integrado en el módulo de Reportes con exportación a Excel y PDF.
-- **Sistema de premios automáticos**: Cada 50 estrellas se registra un premio pendiente que el admin puede marcar como entregado.
+- **Sistema de premios automáticos**: Cada 50 estrellas se registra un premio pendiente que el admin puede marcar como entregado. Al entregarlo, el contador del niño se reinicia (el ciclo vuelve a 0).
 
 ### 📊 Reportes
 
@@ -137,15 +141,17 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 ### 📲 PWA (Progressive Web App)
 
 - **Instalable en celulares**: Se puede "Añadir a pantalla de inicio" como app nativa.
-- **Service Worker**: Funciona offline con la página `/offline`.
+- **Service Worker optimizado**: Se ha configurado con `runtimeCaching` para no cachear las respuestas de Supabase (evita datos obsoletos).
 - **Pantalla completa**: Sin la barra de URL del navegador.
 - **Icono personalizado**: El logo de la iglesia en la pantalla del celular.
+- **Página de limpieza temporal**: Ruta `/limpiar-cache` para forzar la actualización del Service Worker en dispositivos con caché antigua.
 
 ### 🎁 Sistema de Premios
 
 - **Automático**: El trigger de la BD detecta cuando un niño llega a 50 estrellas.
 - **Pendientes / Entregados**: El admin ve los premios pendientes y los marca como entregados.
-- **Historial**: Se registra cuándo se ganó, cuándo se entregó y quién lo entregó.
+- **Deshacer entrega**: Botón para devolver un premio a "Pendiente" y borrar la fecha de entrega sin perder el registro de las 50 estrellas.
+- **Historial**: Se registra cuándo se ganó y cuándo se entregó.
 
 ### 🔄 Historial de Cambios
 
@@ -197,8 +203,8 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 | `restricciones_maestros` | Parejas que no pueden servir juntas. |
 | `ausencias_maestros` | Periodos de ausencia programada. |
 | `logs_correos` | Registro de correos enviados. |
-| `ninos` | Niños registrados con código secreto para consultar sus puntos. |
-| `puntos_ninos` | Estrellas semanales (asistencia, comportamiento, versículo). |
+| `ninos` | Niños registrados con código secreto de 4 dígitos. |
+| `puntos_ninos` | Estrellas semanales (asistencia, comportamiento, versículo, observación). |
 | `premios_ganados` | Premios otorgados automáticamente cada 50 estrellas. |
 
 ---
@@ -250,10 +256,11 @@ Automatiza la planificación de clases, la asignación de maestros, la rotación
 | :--- | :--- | :--- |
 | `/login` | Autenticación con Magic Link | Público |
 | `/registro` | Registro de nuevos maestros | Público |
-| `/puntos` | Consulta de puntos de niños (buscador + QR) | Público |
+| `/puntos` | Consulta de puntos de niños (buscador + QR + historial) | Público |
 | `/editar/[token]` | Edición de clase por token | Público |
 | `/actividad/[token]` | Edición de actividad de niños por token | Público |
 | `/offline` | Página cuando no hay conexión (PWA) | Público |
+| `/limpiar-cache` | Página temporal para limpiar el Service Worker | Público |
 
 ---
 
@@ -288,10 +295,12 @@ gracia-ebd/
 │   │   │   └── rotacion-automatica/         # API: generar rotación
 │   │   ├── editar/[token]/                  # Edición pública (principal)
 │   │   ├── actividad/[token]/               # Edición pública (niños)
-│   │   ├── puntos/                          # 🆕 Ventana pública de puntos
+│   │   ├── puntos/                          # Ventana pública de puntos
 │   │   │   ├── page.tsx
-│   │   │   └── BuscadorCodigo.tsx
-│   │   ├── offline/                         # 🆕 Página offline (PWA)
+│   │   │   └── PuntosPublicos2.tsx          # Componente cliente de la cartelera
+│   │   ├── offline/                         # Página offline (PWA)
+│   │   │   └── page.tsx
+│   │   ├── limpiar-cache/                   # Página temporal de limpieza
 │   │   │   └── page.tsx
 │   │   ├── auth/
 │   │   │   ├── callback/route.ts
@@ -309,18 +318,19 @@ gracia-ebd/
 │   │   ├── ModalAsignarMaestros.tsx
 │   │   ├── SelectorMaestros.tsx
 │   │   ├── ThemeToggle.tsx
-│   │   └── BotonInstalarPWA.tsx             # 🆕 Botón de instalar PWA
+│   │   ├── BotonInstalarPWA.tsx
+│   │   └── EstrellaPuffy.tsx                # SVG de las estrellas
 │   ├── lib/
 │   │   ├── saludos.ts
 │   │   └── supabase/
 │   │       ├── client.ts
 │   │       └── server.ts
-│   └── middleware.ts                        # Protección de rutas
+│   └── proxy.ts                             # Protección de rutas (antes middleware.ts)
 ├── public/
-│   ├── icon-192.png                         # 🆕 Icono PWA
-│   ├── icon-512.png                         # 🆕 Icono PWA
-│   ├── manifest.json                        # 🆕 Manifest PWA
-│   └── sw.js                                # 🆕 Service Worker (generado)
+│   ├── icon-192.png                         # Icono PWA
+│   ├── icon-512.png                         # Icono PWA
+│   ├── manifest.json                        # Manifest PWA
+│   └── sw.js                                # Service Worker (generado)
 ├── vercel.json
 ├── next.config.ts
 ├── tailwind.config.ts
@@ -363,7 +373,8 @@ npm install
    - `ninos`, `puntos_ninos`, `premios_ganados`
 3. Configurar las políticas RLS.
 4. Configurar la función verificar_premio() y su trigger.
-5. Obtener `URL` y `anon key` de **Settings → API**.
+5. Personalizar las plantillas de correo (Magic Link, Recuperación, Verificación, Cambio de correo) con el HTML institucional.
+6. Obtener `URL` y `anon key` de **Settings → API**.
 
 ### Paso 4: Configurar Brevo
 
@@ -392,6 +403,7 @@ Abrir [http://localhost:3000](http://localhost:3000).
 npm run build
 npm run start
 ```
+> **Nota:** La PWA (Service Worker e instalación) solo funciona en modo producción. En `npm run dev` está deshabilitada para no interferir con el desarrollo.
 
 ---
 
@@ -471,6 +483,7 @@ npm run lint      # Ejecuta ESLint para validar código
 - [ ] Vista de calendario mensual para planificación visual
 - [ ] Biblioteca de temas reutilizables
 - [ ] Backup automático de la base de datos
+- [ ] Sistema de Alabanza (rotación de músicos, instrumentos, eventos)
 
 ### 🔮 Q2 2027 (Futuro)
 
@@ -512,7 +525,7 @@ Este proyecto está bajo la **Licencia MIT**. Consulta el archivo [LICENSE](LICE
 ---
 
 ## 🙏 Agradecimientos
-
+- **Dios** porque todo es de Él.
 - **Gracia Iglesia Cristiana** por la confianza y el propósito del proyecto.
 - **Comunidad Open Source** por las herramientas increíbles que hacen posible este sistema.
 - **Vercel, Supabase, Brevo y WhatsApp** por sus planes gratuitos que permiten que este proyecto sea **100% sin costo**.
