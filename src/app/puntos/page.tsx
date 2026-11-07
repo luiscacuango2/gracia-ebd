@@ -6,6 +6,12 @@ export const revalidate = 0
 export default async function PuntosPage() {
   const supabase = await createClient()
 
+  // Traemos también todas las semanas (fechas) ordenadas
+  const { data: semanas } = await supabase
+    .from('semanas')
+    .select('fecha')
+    .order('fecha', { ascending: true })
+
   const { data: ninos } = await supabase
     .from('ninos')
     .select(`
@@ -18,10 +24,11 @@ export default async function PuntosPage() {
         semanas (fecha),
         maestros (nombres) 
       ),
-            premios_ganados (fecha_ganado, entregado)
+      premios_ganados (fecha_ganado, entregado)
     `)
     .eq('activo', true)
     .order('nombres', { ascending: true })
 
-  return <PuntosPublicos ninos={ninos || []} />
+  // Pasamos las semanas como prop
+  return <PuntosPublicos ninos={ninos || []} semanas={semanas || []} />
 }

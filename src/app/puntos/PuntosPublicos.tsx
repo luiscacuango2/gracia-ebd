@@ -28,7 +28,7 @@ type Nino = {
 
 const META = 50
 
-function calcularTotales(nino: Nino) {
+function calcularTotales(nino: Nino, semanasProgramadas: { fecha: string }[]) {
   const getFecha = (p: Punto): string | null => {
     if (!p.semanas) return null
     if (Array.isArray(p.semanas)) return p.semanas[0]?.fecha || null
@@ -119,16 +119,40 @@ function calcularTotales(nino: Nino) {
     .filter(item => item.totalDia > 0)
     .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
 
+  // Calcular la racha de asistencias consecutivas basándonos en la tabla semanas
+  let racha = 0
+
+  // 1. Creamos un Set con las fechas en las que el niño SÍ asistió
+  const fechasAsistidas = new Set(
+    puntosValidos
+      .filter(p => Boolean(p.asistencia))
+      .map(p => getFecha(p)!)
+  )
+
+  // 2. Recorremos las semanas programadas desde la más reciente hacia atrás
+  const semanasOrdenadas = [...semanasProgramadas].sort(
+    (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+  )
+
+  for (const semana of semanasOrdenadas) {
+    if (fechasAsistidas.has(semana.fecha)) {
+      racha++ // Si asistió, sumamos a la racha
+    } else {
+      break // Si faltó a una semana programada, la racha se corta
+    }
+  }
+
   return {
     totalActual: totalAsistencia + totalComportamiento + totalVersiculo,
     asistenciaCiclo: totalAsistencia,
     comportamientoCiclo: totalComportamiento,
     versiculoCiclo: totalVersiculo,
     historial,
+    racha, // 
   }
 }
 
-export default function PuntosPublicos({ ninos }: { ninos: Nino[] }) {
+export default function PuntosPublicos({ ninos, semanas }: { ninos: Nino[], semanas: { fecha: string }[] }) {
   const [vista, setVista] = useState<'home' | 'maestro' | 'ficha'>('home')
   const [ninoSeleccionado, setNinoSeleccionado] = useState<Nino | null>(null)
   const [animarAnillo, setAnimarAnillo] = useState(false)
@@ -206,8 +230,8 @@ export default function PuntosPublicos({ ninos }: { ninos: Nino[] }) {
 
   const totalesSeleccionado = useMemo(() => {
     if (!ninoSeleccionado) return null
-    return calcularTotales(ninoSeleccionado)
-  }, [ninoSeleccionado])
+    return calcularTotales(ninoSeleccionado, semanas) // Le pasamos las semanas
+  }, [ninoSeleccionado, semanas])
 
   const ninosFiltrados = useMemo(() => {
     if (!busqueda) return ninos
@@ -281,7 +305,7 @@ export default function PuntosPublicos({ ninos }: { ninos: Nino[] }) {
 
           <div className="flex flex-col gap-2.5 mb-6">
             {ninosFiltrados.map(n => {
-              const c = calcularTotales(n)
+              const c = calcularTotales(n, semanas)
               const pct = Math.min(c.totalActual / META, 1)
               const lleno = c.totalActual >= META
               return (
@@ -341,7 +365,14 @@ export default function PuntosPublicos({ ninos }: { ninos: Nino[] }) {
           <div className="flex flex-col gap-4 mb-4">
             {/* Tarjeta del Anillo Grande */}
             <div className="bg-linear-to-b from-crema-tarjeta to-crema-card rounded-4xl shadow-[0_16px_40px_rgba(74,52,40,0.1),0_4px_12px_rgba(74,52,40,0.06)] p-6 text-center relative">
-              <h1 className="font-fredoka font-semibold text-[1.6rem] mb-4 text-marron">{ninoSeleccionado.nombres} {ninoSeleccionado.apellidos}</h1>
+              <h1 className="font-fredoka font-semibold text-[1.6rem] mb-2 text-marron">{ninoSeleccionado.nombres} {ninoSeleccionado.apellidos}</h1>
+
+              {/* Badge de Racha */}
+              {totalesSeleccionado.racha > 1 && (
+                <div className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold mb-4 shadow-sm">
+                  🔥 Racha: {totalesSeleccionado.racha} semanas seguidas
+                </div>
+              )}
 
               <div className="relative w-49 h-49 mx-auto">
                 <svg className="w-full h-full -rotate-90 overflow-visible" viewBox="0 0 180 180">

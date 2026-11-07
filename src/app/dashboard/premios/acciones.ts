@@ -10,15 +10,34 @@ export async function entregarPremio(premioId: string, maestroId: string) {
     .from('premios_ganados')
     .update({
       entregado: true,
-      fecha_entregado: new Date().toISOString(),
-      fecha_ganado: new Date().toISOString(), // Usamos la misma fecha para cerrar el ciclo
+      fecha_entregado: new Date().toISOString(), // Solo actualizamos esta fecha
       maestro_entrego_id: maestroId,
     })
     .eq('id', premioId)
 
   if (error) return { exito: false, mensaje: error.message }
-    // Limpiamos la caché de las rutas donde se muestran los premios y los puntos
+
   revalidatePath('/dashboard/premios')
   revalidatePath('/puntos')
   return { exito: true, mensaje: 'Premio entregado' }
+}
+
+export async function deshacerEntrega(premioId: string) {
+  const supabase = await createClient()
+
+  // En lugar de borrar, actualizamos los campos para volver a "Pendiente"
+  const { error } = await supabase
+    .from('premios_ganados')
+    .update({
+      entregado: false,
+      fecha_entregado: null, // Borramos la fecha de entrega
+      // No tocamos fecha_ganado, así se mantiene la fecha original
+    })
+    .eq('id', premioId)
+
+  if (error) return { exito: false, mensaje: error.message }
+  
+  revalidatePath('/dashboard/premios')
+  revalidatePath('/puntos')
+  return { exito: true, mensaje: 'Entrega deshecha. El premio vuelve a estar pendiente.' }
 }
